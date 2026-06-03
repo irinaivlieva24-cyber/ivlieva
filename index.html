@@ -78,7 +78,7 @@
         select, input { 
             padding: 12px; background: #1c1c2b; border: 1px solid var(--glass-border); 
             color: white; border-radius: 12px; font-size: 15px; outline: none;
-            width: 100%; box-sizing: border-box;
+            width: 80%; box-sizing: border-box;
         }
         
         /* Поле даты - явная ширина 100% */
@@ -225,7 +225,7 @@
         <div class="chart-section" style="margin-top:30px">
             <div class="form-group">
                 <label>Название цели</label>
-                <input type="text" id="goal-name" placeholder="Напр: Ягодичный мост">
+                <input type="text" id="goal-name" placeholder="Например: Ягодичный мост">
                 <label>Целевой вес (кг)</label>
                 <input type="number" id="goal-value">
                 <label>Упражнение</label>
@@ -362,7 +362,7 @@
                 <div class="sets-grid">
                     ${[1,2,3].map(i => `
                         <div class="set-box">
-                            <span class="set-label">Сет ${i}</span>
+                            <span class="set-label">Подход ${i}</span>
                             <div class="input-pair">
                                 <input type="number" class="set-w" data-ex="${ex.id}" placeholder="кг">
                                 <input type="number" class="set-r" data-ex="${ex.id}" placeholder="пов">
