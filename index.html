@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Fitness OS: Backup Edition</title>
+    <title>Fitness OS: Perfect Edition</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
@@ -36,6 +36,7 @@
             padding: 20px 12px 110px 12px; 
         }
         
+        /* Navigation */
         nav { 
             position: fixed; bottom: 0; left: 0; right: 0; 
             display: flex; justify-content: space-around; 
@@ -53,6 +54,7 @@
         nav button .icon { font-size: 20px; filter: grayscale(1); }
         nav button.active .icon { filter: grayscale(0); }
 
+        /* Cards */
         .card { 
             background: var(--card-bg); padding: 20px; border-radius: 24px; 
             box-shadow: 0 10px 30px rgba(0,0,0,0.3); display: none; 
@@ -78,7 +80,14 @@
             color: white; border-radius: 12px; font-size: 15px; outline: none;
             width: 100%; box-sizing: border-box;
         }
+        
+        /* Поле даты - явная ширина 100% */
+        input[type="date"] {
+            width: 100% !important;
+            max-width: 100% !important;
+        }
 
+        /* Workout Layout */
         .ex-row { 
             background: var(--glass); padding: 15px; 
             border-radius: 20px; margin-bottom: 12px; border: 1px solid var(--glass-border);
@@ -87,7 +96,11 @@
         .ex-name { font-weight: 600; font-size: 15px; color: #fff; }
         .ex-start { font-size: 11px; color: var(--accent); }
         
-        .sets-grid { display: flex; flex-direction: column; gap: 8px; }
+        .sets-grid { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 8px; 
+        }
         .set-box { 
             background: #1a1a2a; padding: 10px 12px; border-radius: 14px; 
             display: flex; align-items: center; justify-content: space-between;
@@ -95,10 +108,20 @@
         }
         .set-label { font-size: 11px; color: var(--text-dim); text-transform: uppercase; }
         .input-pair { display: flex; gap: 8px; align-items: center; }
-        .set-input { 
-            width: 45px; padding: 6px; background: #25253a; border: 1px solid #333; 
-            color: white; text-align: center; font-size: 13px; font-weight: 600; 
-            border-radius: 8px; outline: none;
+        
+        /* Поля ввода веса и повторов - фиксированная ширина */
+        .set-w, .set-r { 
+            width: 60px !important; 
+            padding: 8px !important; 
+            background: #25253a !important; 
+            border: 1px solid #333 !important; 
+            color: white !important; 
+            text-align: center !important; 
+            font-size: 13px !important; 
+            font-weight: 600 !important; 
+            border-radius: 8px !important; 
+            outline: none !important;
+            box-sizing: border-box !important;
         }
 
         .btn-main { 
@@ -107,11 +130,14 @@
             cursor: pointer; font-weight: 700; margin-top: 20px; transition: 0.3s; 
             text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 8px 15px var(--accent-glow);
         }
+        .btn-main:active { transform: scale(0.98); }
 
+        /* Goals */
         .goal-item { background: #1c1c2b; padding: 15px; border-radius: 18px; margin-bottom: 12px; border: 1px solid var(--glass-border); }
         .progress-container { background: #0a0a12; height: 8px; border-radius: 4px; margin: 12px 0; overflow: hidden; }
         .progress-bar { height: 100%; background: linear-gradient(to right, var(--accent), var(--success)); width: 0%; transition: width 0.6s ease; }
 
+        /* Settings */
         .settings-group { margin-bottom: 25px; }
         .settings-group h3 { font-size: 16px; color: var(--accent); margin-bottom: 12px; padding-left: 10px; border-left: 3px solid var(--accent); }
         .settings-ex-item { 
@@ -122,20 +148,20 @@
         .btn-del { background: none; color: var(--danger); border: 1px solid var(--danger); padding: 4px 8px; border-radius: 6px; cursor: pointer; font-size: 11px; }
 
         .add-ex-form { display: grid; grid-template-columns: 1fr 70px auto; gap: 8px; margin-top: 12px; }
+        .add-ex-form input { padding: 8px; font-size: 13px; }
         .btn-add { background: var(--accent); color: white; border: none; border-radius: 8px; width: 35px; height: 35px; cursor: pointer; font-weight: bold; }
 
+        /* Metrics */
         .metrics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .chart-section { background: #161625; padding: 15px; border-radius: 20px; margin-top: 20px; border: 1px solid var(--glass-border); height: 350px; }
 
+        /* Summary */
         .summary-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 20px; }
         .summary-box { background: var(--glass); padding: 15px; border-radius: 15px; border: 1px solid var(--glass-border); text-align: center; }
         .summary-val { font-size: 20px; font-weight: 800; color: var(--accent); display: block; }
         .summary-lab { font-size: 11px; color: var(--text-dim); text-transform: uppercase; }
 
-        .backup-section { background: #1a1a2e; padding: 20px; border-radius: 20px; border: 1px solid var(--accent); margin-top: 30px; }
-        .btn-backup { width: 100%; padding: 12px; margin-bottom: 10px; background: #2a2a40; color: white; border: 1px solid var(--accent); border-radius: 12px; cursor: pointer; font-weight: 600; transition: 0.3s; }
-        .btn-backup:hover { background: var(--accent); }
-
+        /* Modal */
         #reset-modal { 
             position: fixed; top: 0; left: 0; right: 0; bottom: 0; 
             background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); 
@@ -234,13 +260,6 @@
         </div>
         <div id="settings-container"></div>
         
-        <div class="backup-section">
-            <h3 style="text-align:center; font-size:16px; color:var(--accent); margin-bottom:15px;">Облако данных ☁️</h3>
-            <button class="btn-backup" onclick="exportData()">💾 Экспортировать бэкап</button>
-            <button class="btn-backup" onclick="document.getElementById('importFile').click()">📂 Восстановить из файла</button>
-            <input type="file" id="importFile" style="display:none" onchange="importData(event)">
-        </div>
-
         <div style="margin-top: 40px; border-top: 1px solid var(--glass-border); padding-top: 20px;">
             <button class="btn-main" style="background: rgba(239, 68, 68, 0.2); color: var(--danger) !important; box-shadow: none;" onclick="confirmReset()">Сбросить данные</button>
         </div>
@@ -278,23 +297,50 @@
 
 <script>
     const DEFAULT_PLAN = {
-        PULL: [{id:'pull1',name:'Подтягивания (нег.)',start:0},{id:'pull2',name:'Тяга верх. блока',start:45},{id:'pull3',name:'Гориз. тяга',start:20},{id:'pull4',name:'Махи в наклоне',start:5},{id:'pull5',name:'Бицепс в блоке',start:10}],
-        PUSH: [{id:'push1',name:'Жим на грудь',start:25},{id:'push2',name:'Жим на плечи',start:10},{id:'push3',name:'Бабочка',start:20},{id:'push4',name:'Разведения в ст.',start:5},{id:'push5',name:'Брусья (трен.)',start:42},{id:'push6',name:'Гантели за гол.',start:5}],
-        LEGS: [{id:'legs1',name:'Жим ногами',start:65},{id:'legs2',name:'Ягодичный мост',start:30},{id:'legs3',name:'Выпады в Смите',start:20},{id:'legs4',name:'Разгибание ног',start:12},{id:'legs5',name:'Сгибание ног',start:15},{id:'legs6',name:'Отведение ноги',start:10}]
+        PULL: [
+            { id: 'pull1', name: 'Подтягивания (нег.)', start: 0 },
+            { id: 'pull2', name: 'Тяга верх. блока', start: 45 },
+            { id: 'pull3', name: 'Гориз. тяга', start: 20 },
+            { id: 'pull4', name: 'Махи в наклоне', start: 5 },
+            { id: 'pull5', name: 'Бицепс в блоке', start: 10 }
+        ],
+        PUSH: [
+            { id: 'push1', name: 'Жим на грудь', start: 25 },
+            { id: 'push2', name: 'Жим на плечи', start: 10 },
+            { id: 'push3', name: 'Бабочка', start: 20 },
+            { id: 'push4', name: 'Разведения в ст.', start: 5 },
+            { id: 'push5', name: 'Брусья (трен.)', start: 42 },
+            { id: 'push6', name: 'Гантели за гол.', start: 5 }
+        ],
+        LEGS: [
+            { id: 'legs1', name: 'Жим ногами', start: 65 },
+            { id: 'legs2', name: 'Ягодичный мост', start: 30 },
+            { id: 'legs3', name: 'Выпады в Смите', start: 20 },
+            { id: 'legs4', name: 'Разгибание ног', start: 12 },
+            { id: 'legs5', name: 'Сгибание ног', start: 15 },
+            { id: 'legs6', name: 'Отведение ноги', start: 10 }
+        ]
     };
 
     let userPlan = JSON.parse(localStorage.getItem('userPlan')) || DEFAULT_PLAN;
-    let myChart = null, metricsChart = null;
+    let myChart = null;
+    let metricsChart = null;
 
-    function initApp() { document.getElementById('workout-date').valueAsDate = new Date(); showTab('add'); }
+    function initApp() {
+        document.getElementById('workout-date').valueAsDate = new Date();
+        showTab('add');
+    }
 
     function showTab(tab) {
         document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
         document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+        
         const activeTab = document.getElementById('tab-' + tab);
         const activeNav = document.getElementById('nav-' + tab);
+        
         if (activeTab) activeTab.classList.add('active');
         if (activeNav) activeNav.classList.add('active');
+        
         if(tab === 'stats') { updateSummary(); updateGroupChart(); }
         if(tab === 'goals') renderGoals();
         if(tab === 'metrics') renderMetricsChart();
@@ -304,13 +350,27 @@
         const type = document.getElementById('workout-type').value;
         const container = document.getElementById('exercise-list-container');
         if (!type) { container.innerHTML = ''; return; }
+
         let html = '';
         userPlan[type].forEach(ex => {
-            html += `<div class="ex-row"><div class="ex-header"><span class="ex-name">${ex.name}</span><span class="ex-start">Старт: ${ex.start}кг</span></div>
-            <div class="sets-grid">
-                ${[1,2,3].map(i => `<div class="set-box"><span class="set-label">Сет ${i}</span>
-                <div class="input-pair"><input type="number" class="set-w" data-ex="${ex.id}" placeholder="кг"><input type="number" class="set-r" data-ex="${ex.id}" placeholder="пов"></div></div>`).join('')}
-            </div></div>`;
+            html += `
+            <div class="ex-row">
+                <div class="ex-header">
+                    <span class="ex-name">${ex.name}</span>
+                    <span class="ex-start">Старт: ${ex.start}кг</span>
+                </div>
+                <div class="sets-grid">
+                    ${[1,2,3].map(i => `
+                        <div class="set-box">
+                            <span class="set-label">Сет ${i}</span>
+                            <div class="input-pair">
+                                <input type="number" class="set-w" data-ex="${ex.id}" placeholder="кг">
+                                <input type="number" class="set-r" data-ex="${ex.id}" placeholder="пов">
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>`;
         });
         container.innerHTML = html;
     }
@@ -319,17 +379,22 @@
         const date = document.getElementById('workout-date').value;
         const type = document.getElementById('workout-type').value;
         if (!date || !type) return alert('Ошибка: дата и группа обязательны!');
+
         const workout = { date, type, exercises: {} };
-        const weights = document.querySelectorAll('.set-w'), reps = document.querySelectorAll('.set-r');
+        const weights = document.querySelectorAll('.set-w');
+        const reps = document.querySelectorAll('.set-r');
         let exIdx = 0;
         userPlan[type].forEach(ex => {
             const sets = [];
             for(let i=0; i<3; i++) {
-                const w = weights[exIdx * 3 + i].value, r = reps[exIdx * 3 + i].value;
+                const w = weights[exIdx * 3 + i].value;
+                const r = reps[exIdx * 3 + i].value;
                 if(w && r) sets.push({ w: parseFloat(w), r: parseInt(r) });
             }
-            workout.exercises[ex.id] = sets; exIdx++;
+            workout.exercises[ex.id] = sets;
+            exIdx++;
         });
+
         const history = JSON.parse(localStorage.getItem('fitnessHistory') || '[]');
         history.push(workout);
         localStorage.setItem('fitnessHistory', JSON.stringify(history));
@@ -352,23 +417,41 @@
         const exercises = userPlan[type];
         const labels = [...new Set(history.map(h => h.date))].sort();
         const datasets = [];
+
         exercises.forEach((ex, idx) => {
             const data = labels.map(date => {
                 const session = history.find(h => h.date === date);
                 return (session && session.exercises[ex.id]) ? Math.max(...session.exercises[ex.id].map(s => s.w)) : null;
             });
-            datasets.push({ label: ex.name, data, borderColor: `hsl(${idx * 70}, 70%, 60%)`, tension: 0.4, spanGaps: true, pointRadius: 4 });
+            datasets.push({
+                label: ex.name,
+                data: data,
+                borderColor: `hsl(${idx * 70}, 70%, 60%)`,
+                tension: 0.4,
+                spanGaps: true,
+                pointRadius: 4
+            });
         });
+
         if (myChart) myChart.destroy();
         myChart = new Chart(document.getElementById('groupChart').getContext('2d'), {
-            type: 'line', data: { labels, datasets },
-            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: '#ccc', font: { size: 10 } } } },
-            scales: { y: { ticks: { color: '#888' }, grid: { color: '#222' } }, x: { ticks: { color: '#888' }, grid: { color: '#222' } } } }
+            type: 'line',
+            data: { labels, datasets },
+            options: { 
+                responsive: true, 
+                maintainAspectRatio: false,
+                plugins: { legend: { position: 'bottom', labels: { color: '#ccc', font: { size: 10 } } } },
+                scales: { y: { ticks: { color: '#888' }, grid: { color: '#222' } }, x: { ticks: { color: '#888' }, grid: { color: '#222' } } }
+            }
         });
     }
 
     function addGoal() {
-        const goal = { name: document.getElementById('goal-name').value, value: parseFloat(document.getElementById('goal-value').value), exId: document.getElementById('goal-ex-id').value };
+        const goal = {
+            name: document.getElementById('goal-name').value,
+            value: parseFloat(document.getElementById('goal-value').value),
+            exId: document.getElementById('goal-ex-id').value
+        };
         if(!goal.name || !goal.value) return alert('Ошибка: заполните цель!');
         const goals = JSON.parse(localStorage.getItem('fitnessGoals') || '[]');
         goals.push(goal);
@@ -383,15 +466,30 @@
         const select = document.getElementById('goal-ex-id');
         select.innerHTML = '';
         Object.values(userPlan).flat().forEach(ex => { select.innerHTML += `<option value="${ex.id}">${ex.name}</option>`; });
+
         let html = '';
         goals.forEach((g, i) => {
             let currentMax = 0;
-            history.forEach(sess => { if(sess.exercises[g.exId]) { const max = Math.max(...sess.exercises[g.exId].map(s => s.w)); if(max > currentMax) currentMax = max; } });
+            history.forEach(sess => {
+                if(sess.exercises[g.exId]) {
+                    const max = Math.max(...sess.exercises[g.exId].map(s => s.w));
+                    if(max > currentMax) currentMax = max;
+                }
+            });
             const startWeight = userPlan[Object.keys(userPlan).find(k => userPlan[k].some(e => e.id === g.exId))].find(e => e.id === g.exId).start;
             const progress = Math.min(100, Math.max(0, ((currentMax - startWeight) / (g.value - startWeight)) * 100)) || 0;
-            html += `<div class="goal-item"><div style="display:flex; justify-content:space-between; font-size:14px;"><strong style="color:var(--text); white-space: normal;">${g.name}</strong><span style="color:var(--accent)">${currentMax} / ${g.value} кг</span></div>
-            <div class="progress-container"><div class="progress-bar" style="width:${progress}%"></div></div>
-            <div style="display:flex; justify-content:space-between; font-size:11px; color:var(--text-dim)"><span>Прогресс: ${Math.round(progress)}%</span><span style="color:var(--danger); cursor:pointer" onclick="deleteGoal(${i})">Удалить</span></div></div>`;
+            
+            html += `<div class="goal-item">
+                <div style="display:flex; justify-content:space-between; font-size:14px;">
+                    <strong style="color:var(--text); white-space: normal;">${g.name}</strong>
+                    <span style="color:var(--accent)">${currentMax} / ${g.value} кг</span>
+                </div>
+                <div class="progress-container"><div class="progress-bar" style="width:${progress}%"></div></div>
+                <div style="display:flex; justify-content:space-between; font-size:11px; color:var(--text-dim)">
+                    <span>Прогресс: ${Math.round(progress)}%</span>
+                    <span style="color:var(--danger); cursor:pointer" onclick="deleteGoal(${i})">Удалить</span>
+                </div>
+            </div>`;
         });
         container.innerHTML = html;
     }
@@ -415,11 +513,20 @@
     function renderMetricsChart() {
         const history = JSON.parse(localStorage.getItem('metricsHistory') || '[]');
         const labels = history.map(h => h.date);
-        const datasets = [{ label: 'Вес', data: history.map(h => h.w), borderColor: '#bb86fc', tension: 0.4 }, { label: 'Бедра', data: history.map(h => h.h), borderColor: '#03dac6', tension: 0.4 }, { label: 'Грудь', data: history.map(h => h.c), borderColor: '#f87171', tension: 0.4 }, { label: 'Талия', data: history.map(h => h.wa), borderColor: '#fbbf24', tension: 0.4 }];
+        const datasets = [
+            { label: 'Вес', data: history.map(h => h.w), borderColor: '#bb86fc', tension: 0.4 },
+            { label: 'Бедра', data: history.map(h => h.h), borderColor: '#03dac6', tension: 0.4 },
+            { label: 'Грудь', data: history.map(h => h.c), borderColor: '#f87171', tension: 0.4 },
+            { label: 'Талия', data: history.map(h => h.wa), borderColor: '#fbbf24', tension: 0.4 }
+        ];
         if (metricsChart) metricsChart.destroy();
         metricsChart = new Chart(document.getElementById('metricsChart').getContext('2d'), {
             type: 'line', data: { labels, datasets },
-            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: '#ccc', font: { size: 10 } } } }, scales: { y: { ticks: { color: '#888' }, grid: { color: '#222' } }, x: { ticks: { color: '#888' }, grid: { color: '#222' } } } }
+            options: { 
+                responsive: true, maintainAspectRatio: false,
+                plugins: { legend: { position: 'bottom', labels: { color: '#ccc', font: { size: 10 } } } }, 
+                scales: { y: { ticks: { color: '#888' }, grid: { color: '#222' } }, x: { ticks: { color: '#888' }, grid: { color: '#222' } } } 
+            }
         });
     }
 
@@ -427,18 +534,32 @@
         const group = document.getElementById('settings-group-select').value;
         const container = document.getElementById('settings-container');
         if (!group) { container.innerHTML = ''; return; }
+
         const groupName = { PULL: 'Спина и бицепс', PUSH: 'Грудь и трицепс', LEGS: 'Ноги и ягодицы' }[group];
         let html = `<div class="settings-group"><h3 style="color:var(--accent)">${groupName}</h3>`;
         userPlan[group].forEach((ex, idx) => {
-            html += `<div class="settings-ex-item"><span style="flex:1; text-align:left">${ex.name}</span><input type="number" style="width:60px; padding:5px" value="${ex.start}" onchange="updateStartWeight('${group}', ${idx}, this.value)"><button class="btn-del" onclick="deleteExercise('${group}', ${idx})">✕</button></div>`;
+            html += `
+            <div class="settings-ex-item">
+                <span style="flex:1; text-align:left">${ex.name}</span>
+                <input type="number" style="width:60px; padding:5px" value="${ex.start}" onchange="updateStartWeight('${group}', ${idx}, this.value)">
+                <button class="btn-del" onclick="deleteExercise('${group}', ${idx})">✕</button>
+            </div>`;
         });
-        html += `<div class="add-ex-form"><input type="text" id="new-name-${group}" placeholder="Название"><input type="number" id="new-start-${group}" placeholder="кг"><button class="btn-add" onclick="addExercise('${group}')">+</button></div></div>`;
+        
+        html += `
+            <div class="add-ex-form">
+                <input type="text" id="new-name-${group}" placeholder="Название">
+                <input type="number" id="new-start-${group}" placeholder="кг">
+                <button class="btn-add" onclick="addExercise('${group}')">+</button>
+            </div>
+        `;
+        html += `</div>`;
         container.innerHTML = html;
     }
 
     function updateStartWeight(group, idx, val) {
         userPlan[group][idx].start = parseFloat(val);
-        localStorage.setItem('userPlan', JSON.stringify(user laPlan || userPlan));
+        localStorage.setItem('userPlan', JSON.stringify(userPlan));
     }
 
     function addExercise(group) {
@@ -451,45 +572,11 @@
     }
 
     function deleteExercise(group, idx) {
-        if(confirm('Удалить упражнение?')) {
+        if(confirm('Удалить упражнение из плана?')) {
             userPlan[group].splice(idx, 1);
             localStorage.setItem('userPlan', JSON.stringify(userPlan));
             renderSettingsGroup();
         }
-    }
-
-    // --- БЭКАП И ВОССТАНОВЛЕНИЕ ---
-    function exportData() {
-        const fullData = {
-            plan: userPlan,
-            history: localStorage.getItem('fitnessHistory'),
-            goals: localStorage.getItem('fitnessGoals'),
-            metrics: localStorage.getItem('metricsHistory')
-        };
-        const blob = new Blob([JSON.stringify(fullData)], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `fitness_backup_${new Date().toLocaleDateString()}.json`;
-        a.click();
-    }
-
-    function importData(event) {
-        const file = event.target.files[0];
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            try {
-                const data = JSON.parse(e.target.result);
-                if(data.plan) { userPlan = data.plan; localStorage.setItem('userPlan', JSON.stringify(userPlan)); }
-                if(data.history) localStorage.setItem('fitnessHistory', data.history);
-                if(data.goals) localStorage.setItem('fitnessGoals', data.goals);
-                if(data.metrics) localStorage.setItem('metricsHistory', data.metrics);
-                alert('Данные успешно восстановлены! 🚀');
-                location.reload();
-            } catch(e) { alert('Ошибка файла бэкапа!'); }
-        };
-        reader.readAsText(file);
     }
 
     function confirmReset() { document.getElementById('reset-modal').style.display = 'flex'; }
