@@ -83,7 +83,7 @@
         }
         .input-date { width: 90%; margin: 0 auto; display: block; }
 
-        /* Workout Layout — подходы в столбик */
+        /* Workout Layout */
         .ex-row { 
             background: var(--glass); padding: 15px; 
             border-radius: 20px; margin-bottom: 12px; border: 1px solid var(--glass-border);
@@ -125,6 +125,44 @@
         }
         .increase-checkbox-row input { width: 18px; height: 18px; cursor: pointer; accent-color: var(--gold); }
 
+        /* Индикатор прогресса тренировки */
+        .workout-progress {
+            background: linear-gradient(135deg, rgba(192, 132, 252, 0.1), rgba(126, 34, 206, 0.1));
+            border: 1px solid var(--glass-border);
+            padding: 14px 16px;
+            border-radius: 16px;
+            margin-bottom: 16px;
+            display: none;
+        }
+        .workout-progress.visible { display: block; }
+        .progress-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 10px;
+        }
+        .progress-title {
+            font-size: 11px; color: var(--text-dim);
+            text-transform: uppercase; letter-spacing: 1px; font-weight: 600;
+        }
+        .progress-percent {
+            font-size: 18px; font-weight: 800; color: var(--accent);
+            font-variant-numeric: tabular-nums;
+        }
+        .progress-percent.complete { color: var(--success); }
+        .progress-bar-wrap {
+            background: #0a0a12; height: 8px; border-radius: 4px; overflow: hidden;
+        }
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(to right, var(--accent), var(--success));
+            width: 0%;
+            transition: width 0.4s ease;
+            border-radius: 4px;
+        }
+        .progress-details {
+            display: flex; justify-content: space-between;
+            margin-top: 8px; font-size: 11px; color: var(--text-dim);
+        }
+
         .btn-main { 
             width: 100%; padding: 16px; background: linear-gradient(135deg, var(--accent), var(--accent-dark)); 
             color: #ffffff !important; border: none; border-radius: 15px; font-size: 15px; 
@@ -148,51 +186,6 @@
         .summary-val { font-size: 20px; font-weight: 800; color: var(--accent); display: block; }
         .summary-lab { font-size: 11px; color: var(--text-dim); text-transform: uppercase; }
 
-        /* Muscle Map */
-        .muscle-map-section { 
-            background: #161625; padding: 20px 15px; border-radius: 20px; 
-            margin-top: 20px; border: 1px solid var(--glass-border);
-        }
-        .muscle-map-container { 
-            display: grid; grid-template-columns: 1fr 1fr; gap: 10px; 
-            margin-top: 15px;
-        }
-        .body-view { text-align: center; }
-        .body-view h4 { 
-            margin: 0 0 8px 0; font-size: 11px; color: var(--text-dim); 
-            text-transform: uppercase; letter-spacing: 1px;
-        }
-        .body-view svg { width: 100%; max-width: 180px; height: auto; }
-        .muscle { 
-            transition: fill 0.6s ease, opacity 0.6s ease, filter 0.3s ease; 
-            cursor: pointer;
-            stroke: rgba(255,255,255,0.08);
-            stroke-width: 0.5;
-        }
-        .muscle:hover { filter: brightness(1.4) drop-shadow(0 0 6px var(--accent)); }
-        .body-outline { fill: #1a1a2a; stroke: #2a2a3a; stroke-width: 0.5; }
-        
-        .muscle-legend { 
-            display: grid; grid-template-columns: 1fr 1fr; gap: 6px; 
-            margin-top: 15px; font-size: 11px;
-        }
-        .legend-item { 
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 6px 10px; background: var(--glass); border-radius: 8px;
-            border: 1px solid var(--glass-border);
-        }
-        .legend-name { color: var(--text-dim); }
-        .legend-val { color: var(--accent); font-weight: 700; }
-        
-        .intensity-scale { 
-            display: flex; align-items: center; gap: 8px; 
-            margin-top: 12px; font-size: 10px; color: var(--text-dim);
-        }
-        .intensity-bar { 
-            flex: 1; height: 8px; border-radius: 4px;
-            background: linear-gradient(to right, #2a2a3a, #c084fc, #fbbf24);
-        }
-
         /* PR List */
         .pr-section { 
             background: #161625; padding: 15px; border-radius: 20px; 
@@ -206,25 +199,109 @@
         .pr-name { font-size: 13px; color: var(--text); }
         .pr-val { font-size: 14px; font-weight: 700; color: var(--gold); }
 
-        /* Settings */
+        /* Settings — новый дизайн */
         .settings-group { margin-bottom: 25px; }
         .settings-group h3 { font-size: 16px; color: var(--accent); margin-bottom: 12px; padding-left: 10px; border-left: 3px solid var(--accent); }
-        .settings-ex-item { 
-            display: grid; grid-template-columns: 1fr auto auto auto; align-items: center; gap: 10px;
-            background: var(--glass); padding: 10px; border-radius: 12px; margin-bottom: 8px; 
+        
+        .settings-ex-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+            padding: 14px;
+            border-radius: 16px;
+            margin-bottom: 10px;
             border: 1px solid var(--glass-border);
+            position: relative;
+            transition: border-color 0.2s;
         }
-        .btn-del { background: none; color: var(--danger); border: 1px solid var(--danger); padding: 4px 8px; border-radius: 6px; cursor: pointer; font-size: 11px; }
-        .type-toggle { display: flex; gap: 5px; font-size: 10px; }
+        .settings-ex-card:hover { border-color: rgba(192, 132, 252, 0.3); }
+        .ex-card-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 12px; padding-bottom: 10px;
+            border-bottom: 1px dashed var(--glass-border);
+        }
+        .ex-card-number {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 24px; height: 24px; border-radius: 8px;
+            background: var(--accent-dark); color: white;
+            font-size: 11px; font-weight: 700; margin-right: 10px;
+        }
+        .ex-card-title {
+            flex: 1; display: flex; align-items: center;
+        }
+        .ex-card-title input {
+            background: transparent; border: none; color: white;
+            font-size: 14px; font-weight: 600; padding: 4px 0;
+            border-bottom: 1px dashed transparent;
+        }
+        .ex-card-title input:focus {
+            border-bottom-color: var(--accent);
+        }
+        .btn-del { 
+            background: rgba(248, 113, 113, 0.1); 
+            color: var(--danger); 
+            border: 1px solid rgba(248, 113, 113, 0.3); 
+            padding: 6px 10px; border-radius: 8px; cursor: pointer; 
+            font-size: 11px; font-weight: 600;
+            transition: 0.2s;
+        }
+        .btn-del:hover { background: var(--danger); color: white; }
+        
+        .ex-card-body {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 10px; align-items: center;
+        }
+        .ex-card-field label {
+            font-size: 9px; color: var(--text-dim);
+            text-transform: uppercase; letter-spacing: 0.5px;
+            margin-bottom: 4px; display: block;
+        }
+        .ex-card-field input {
+            padding: 8px 10px; font-size: 13px; font-weight: 600;
+            background: #1a1a2a;
+        }
+        .type-toggle { 
+            display: flex; gap: 0; border-radius: 8px; overflow: hidden;
+            border: 1px solid var(--glass-border);
+            background: #1a1a2a;
+        }
         .type-btn {
-            padding: 3px 6px; border-radius: 4px; background: #333;
-            color: #999; cursor: pointer; font-size: 10px;
+            flex: 1; padding: 8px 6px; 
+            color: var(--text-dim); cursor: pointer; 
+            font-size: 11px; font-weight: 600;
+            text-align: center; transition: 0.2s;
+            background: transparent; border: none;
         }
-        .type-btn.active { background: var(--accent); color: white; }
+        .type-btn.active { 
+            background: var(--accent); 
+            color: white;
+        }
 
-        .add-ex-form { display: grid; grid-template-columns: 1fr 70px auto auto; gap: 8px; margin-top: 12px; }
-        .add-ex-form input { padding: 8px; font-size: 13px; }
-        .btn-add { background: var(--accent); color: white; border: none; border-radius: 8px; width: 35px; height: 35px; cursor: pointer; font-weight: bold; }
+        /* Форма добавления упражнения */
+        .add-ex-card {
+            background: linear-gradient(135deg, rgba(192, 132, 252, 0.08), rgba(126, 34, 206, 0.04));
+            border: 1px dashed rgba(192, 132, 252, 0.4);
+            padding: 16px;
+            border-radius: 16px;
+            margin-top: 16px;
+        }
+        .add-ex-title {
+            font-size: 13px; font-weight: 700; color: var(--accent);
+            margin-bottom: 12px; display: flex; align-items: center; gap: 6px;
+        }
+        .add-ex-fields {
+            display: flex; flex-direction: column; gap: 10px;
+        }
+        .add-ex-row {
+            display: grid; grid-template-columns: 1fr 90px; gap: 10px;
+        }
+        .btn-add-main {
+            width: 100%; padding: 12px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+            color: white; border: none; border-radius: 10px;
+            font-size: 13px; font-weight: 700; cursor: pointer;
+            text-transform: uppercase; letter-spacing: 1px;
+            margin-top: 4px;
+            transition: 0.2s;
+        }
+        .btn-add-main:hover { transform: translateY(-1px); box-shadow: 0 4px 12px var(--accent-glow); }
 
         /* Modal */
         #reset-modal { 
@@ -258,6 +335,19 @@
                 <option value="LEGS">Ноги и ягодицы</option>
             </select>
         </div>
+        <div id="workout-progress" class="workout-progress">
+            <div class="progress-header">
+                <span class="progress-title">Выполнение тренировки</span>
+                <span class="progress-percent" id="progress-percent">0%</span>
+            </div>
+            <div class="progress-bar-wrap">
+                <div class="progress-bar-fill" id="progress-bar-fill"></div>
+            </div>
+            <div class="progress-details">
+                <span id="progress-sets">Подходы: 0 / 0</span>
+                <span id="progress-reps">Повторы: 0</span>
+            </div>
+        </div>
         <div id="exercise-list-container"></div>
         <button class="btn-main" onclick="saveWorkout()">Зафиксировать прогресс</button>
     </div>
@@ -270,91 +360,10 @@
             <div class="summary-box"><span class="summary-val" id="stat-pull">-</span><span class="summary-lab">Спина и бицепс</span></div>
             <div class="summary-box"><span class="summary-val" id="stat-push">-</span><span class="summary-lab">Грудь и трицепс</span></div>
             <div class="summary-box" style="grid-column: span 2;"><span class="summary-val" id="stat-legs">-</span><span class="summary-lab">Ноги и ягодицы</span></div>
-            <div class="summary-box"><span class="summary-val" id="stat-tonnage">-</span><span class="summary-lab">Тоннаж всего (кг)</span></div>
-            <div class="summary-box"><span class="summary-val" id="stat-perf">-</span><span class="summary-lab">Полнота плана %</span></div>
+            <div class="summary-box" style="grid-column: span 2;"><span class="summary-val" id="stat-perf">-</span><span class="summary-lab">Общая полнота плана %</span></div>
         </div>
-
-        <div class="muscle-map-section">
-            <h3 style="margin-top:0;">🔥 Активация мышц</h3>
-            <div class="muscle-map-container">
-                <div class="body-view">
-                    <h4>Спереди</h4>
-                    <svg viewBox="0 0 200 500" xmlns="http://www.w3.org/2000/svg">
-                        <!-- Голова -->
-                        <circle cx="100" cy="35" r="22" class="body-outline"/>
-                        <!-- Шея -->
-                        <rect x="90" y="55" width="20" height="12" class="body-outline"/>
-                        <!-- Дельты -->
-                        <path class="muscle" data-muscle="shoulders" d="M 68 70 Q 55 72 50 90 Q 52 105 65 108 Q 75 100 78 85 Z"/>
-                        <path class="muscle" data-muscle="shoulders" d="M 132 70 Q 145 72 150 90 Q 148 105 135 108 Q 125 100 122 85 Z"/>
-                        <!-- Грудь -->
-                        <path class="muscle" data-muscle="chest" d="M 78 78 Q 100 75 122 78 L 125 118 Q 100 125 75 118 Z"/>
-                        <!-- Бицепс -->
-                        <path class="muscle" data-muscle="biceps" d="M 50 108 Q 42 135 45 170 Q 55 175 62 170 Q 68 135 65 108 Z"/>
-                        <path class="muscle" data-muscle="biceps" d="M 150 108 Q 158 135 155 170 Q 145 175 138 170 Q 132 135 135 108 Z"/>
-                        <!-- Предплечья -->
-                        <path class="body-outline" d="M 45 172 Q 40 210 42 240 L 58 240 Q 62 210 62 172 Z"/>
-                        <path class="body-outline" d="M 155 172 Q 160 210 158 240 L 142 240 Q 138 210 138 172 Z"/>
-                        <!-- Пресс -->
-                        <path class="muscle" data-muscle="abs" d="M 78 125 L 122 125 L 118 215 Q 100 220 82 215 Z"/>
-                        <!-- Квадрицепсы -->
-                        <path class="muscle" data-muscle="quads" d="M 82 222 L 98 222 L 95 360 Q 88 365 80 360 Z"/>
-                        <path class="muscle" data-muscle="quads" d="M 102 222 L 118 222 L 120 360 Q 112 365 105 360 Z"/>
-                        <!-- Икры -->
-                        <path class="muscle" data-muscle="calves" d="M 80 368 L 95 368 L 92 460 Q 86 465 82 460 Z"/>
-                        <path class="muscle" data-muscle="calves" d="M 105 368 L 120 368 L 118 460 Q 114 465 108 460 Z"/>
-                    </svg>
-                </div>
-                <div class="body-view">
-                    <h4>Сзади</h4>
-                    <svg viewBox="0 0 200 500" xmlns="http://www.w3.org/2000/svg">
-                        <!-- Голова -->
-                        <circle cx="100" cy="35" r="22" class="body-outline"/>
-                        <!-- Шея -->
-                        <rect x="90" y="55" width="20" height="12" class="body-outline"/>
-                        <!-- Трапеция -->
-                        <path class="muscle" data-muscle="traps" d="M 70 68 L 130 68 L 140 95 Q 100 85 60 95 Z"/>
-                        <!-- Спина (широчайшие) -->
-                        <path class="muscle" data-muscle="back" d="M 62 98 Q 100 92 138 98 L 135 175 Q 100 185 65 175 Z"/>
-                        <!-- Трицепс -->
-                        <path class="muscle" data-muscle="triceps" d="M 50 108 Q 42 135 45 170 Q 55 175 62 170 Q 68 135 65 108 Z"/>
-                        <path class="muscle" data-muscle="triceps" d="M 150 108 Q 158 135 155 170 Q 145 175 138 170 Q 132 135 135 108 Z"/>
-                        <!-- Предплечья -->
-                        <path class="body-outline" d="M 45 172 Q 40 210 42 240 L 58 240 Q 62 210 62 172 Z"/>
-                        <path class="body-outline" d="M 155 172 Q 160 210 158 240 L 142 240 Q 138 210 138 172 Z"/>
-                        <!-- Поясница -->
-                        <path class="muscle" data-muscle="lowerback" d="M 68 178 L 132 178 L 128 218 Q 100 222 72 218 Z"/>
-                        <!-- Ягодицы -->
-                        <path class="muscle" data-muscle="glutes" d="M 72 222 L 98 222 L 96 270 Q 84 275 74 268 Z"/>
-                        <path class="muscle" data-muscle="glutes" d="M 102 222 L 128 222 L 126 268 Q 116 275 104 270 Z"/>
-                        <!-- Бицепс бедра -->
-                        <path class="muscle" data-muscle="hamstrings" d="M 78 275 L 96 275 L 94 365 Q 86 370 80 365 Z"/>
-                        <path class="muscle" data-muscle="hamstrings" d="M 104 275 L 122 275 L 120 365 Q 114 370 106 365 Z"/>
-                        <!-- Икры -->
-                        <path class="muscle" data-muscle="calves" d="M 80 368 L 95 368 L 92 460 Q 86 465 82 460 Z"/>
-                        <path class="muscle" data-muscle="calves" d="M 105 368 L 120 368 L 118 460 Q 114 465 108 460 Z"/>
-                    </svg>
-                </div>
-            </div>
-            <div class="intensity-scale">
-                <span>Слабо</span>
-                <div class="intensity-bar"></div>
-                <span>Макс</span>
-            </div>
-            <div class="muscle-legend" id="muscle-legend"></div>
-        </div>
-
-        <div class="pr-section">
-            <h3 style="margin-top:0;">🏆 Личные рекорды</h3>
-            <div id="pr-list"></div>
-        </div>
-
-        <div class="chart-section">
-            <canvas id="volumeChart"></canvas>
-        </div>
-
-        <div class="form-group" style="margin-top:20px;">
-            <label>Анализ группы (вес)</label>
+        <div class="form-group">
+            <label>Анализ группы</label>
             <select id="chart-group-select" onchange="updateGroupChart()">
                 <option value="PULL">Спина и бицепс</option>
                 <option value="PUSH">Грудь и трицепс</option>
@@ -366,6 +375,10 @@
         </div>
         <div class="chart-section">
             <canvas id="repsOnlyChart"></canvas>
+        </div>
+        <div class="pr-section">
+            <h3 style="margin-top:0;">🏆 Личные рекорды</h3>
+            <div id="pr-list"></div>
         </div>
     </div>
 
@@ -454,36 +467,8 @@
         ]
     };
 
-    // Распределение упражнений по мышцам (коэффициенты)
-    const MUSCLE_DISTRIBUTION = {
-        push1: {chest: 0.7, triceps: 0.3},
-        push2: {shoulders: 0.7, triceps: 0.3},
-        push3: {chest: 0.8, triceps: 0.2},
-        push4: {shoulders: 0.9, triceps: 0.1},
-        push5: {chest: 0.5, triceps: 0.5},
-        push6: {shoulders: 0.8, triceps: 0.2},
-        pull1: {back: 0.6, biceps: 0.4},
-        pull2: {back: 0.6, biceps: 0.4},
-        pull3: {back: 0.5, traps: 0.5},
-        pull4: {back: 0.4, traps: 0.6},
-        pull5: {biceps: 1.0},
-        legs1: {quads: 0.6, glutes: 0.4},
-        legs2: {glutes: 0.8, hamstrings: 0.2},
-        legs3: {quads: 0.5, glutes: 0.5},
-        legs4: {quads: 1.0},
-        legs5: {hamstrings: 1.0},
-        legs6: {glutes: 0.7, hamstrings: 0.3}
-    };
-
-    const MUSCLE_NAMES = {
-        chest: 'Грудь', shoulders: 'Плечи', triceps: 'Трицепс',
-        back: 'Спина', biceps: 'Бицепс', traps: 'Трапеция',
-        quads: 'Квадрицепс', hamstrings: 'Бицепс бедра', glutes: 'Ягодицы',
-        calves: 'Икры', abs: 'Пресс', lowerback: 'Поясница'
-    };
-
     let userPlan = JSON.parse(localStorage.getItem('userPlan')) || DEFAULT_PLAN;
-    let myChart = null, repsChart = null, volumeChart = null, wChart = null, dChart = null;
+    let myChart = null, repsChart = null, wChart = null, dChart = null;
 
     function initApp() {
         document.getElementById('workout-date').valueAsDate = new Date();
@@ -497,7 +482,7 @@
         const activeNav = document.getElementById('nav-' + tab);
         if (activeTab) activeTab.classList.add('active');
         if (activeNav) activeNav.classList.add('active');
-        if(tab === 'stats') { updateSummary(); updateGroupChart(); updateRepsOnlyChart(); updateVolumeChart(); renderMuscleMap(); renderPRList(); }
+        if(tab === 'stats') { updateSummary(); updateGroupChart(); updateRepsOnlyChart(); renderPRList(); }
         if(tab === 'metrics') { checkMeasurementReminder(); renderMetricsChart(); }
     }
 
@@ -513,8 +498,6 @@
         return max;
     }
 
-    // Проверка: нужно ли увеличивать вес для ВЫБРАННОЙ даты
-    // Возвращает true, если есть более ранняя тренировка с галочкой canIncrease
     function shouldIncreaseForDate(exId, selectedDate) {
         if (!selectedDate) return false;
         const history = JSON.parse(localStorage.getItem('fitnessHistory') || '[]');
@@ -543,7 +526,14 @@
         const type = document.getElementById('workout-type').value;
         const date = document.getElementById('workout-date').value;
         const container = document.getElementById('exercise-list-container');
-        if (!type) { container.innerHTML = ''; return; }
+        const progressEl = document.getElementById('workout-progress');
+        
+        if (!type) { 
+            container.innerHTML = ''; 
+            progressEl.classList.remove('visible');
+            return; 
+        }
+        progressEl.classList.add('visible');
 
         const history = JSON.parse(localStorage.getItem('fitnessHistory') || '[]');
         const existing = history.find(h => h.date === date && h.type === type);
@@ -571,10 +561,10 @@
                         <div class="set-box">
                             <span class="set-label">Подход ${i+1}</span>
                             <div class="input-pair">
-                                ${exType === 'weight' ? `<input type="number" class="set-input weight-input" data-ex="${ex.id}" data-set="${i}" 
-                                    value="${setsData[i] ? setsData[i].w : ''}" placeholder="кг" oninput="autoSave()">` : ''}
-                                <input type="number" class="set-input" data-ex="${ex.id}" data-set="${i}" 
-                                    value="${setsData[i] ? setsData[i].r : ''}" placeholder="пов" oninput="autoSave()">
+                                ${exType === 'weight' ? `<input type="number" class="set-input weight-input" data-ex="${ex.id}" data-set="${i}" data-type="w"
+                                    value="${setsData[i] ? setsData[i].w : ''}" placeholder="кг" oninput="autoSave(); updateWorkoutProgress();">` : ''}
+                                <input type="number" class="set-input reps-input" data-ex="${ex.id}" data-set="${i}" data-type="r"
+                                    value="${setsData[i] ? setsData[i].r : ''}" placeholder="пов" oninput="autoSave(); updateWorkoutProgress();">
                             </div>
                         </div>
                     `).join('')}
@@ -586,6 +576,36 @@
             </div>`;
         });
         container.innerHTML = html;
+        updateWorkoutProgress();
+    }
+
+    function updateWorkoutProgress() {
+        const type = document.getElementById('workout-type').value;
+        if (!type) return;
+        
+        const exercises = userPlan[type];
+        const totalSets = exercises.length * 3;
+        let filledSets = 0;
+        let totalReps = 0;
+        
+        document.querySelectorAll('.set-box').forEach(box => {
+            const wInput = box.querySelector('.weight-input');
+            const rInput = box.querySelector('.reps-input');
+            const hasW = wInput && wInput.value !== '';
+            const hasR = rInput && rInput.value !== '';
+            
+            // Подход считается заполненным если есть хотя бы одно значение
+            if (hasW || hasR) filledSets++;
+            if (hasR) totalReps += parseInt(rInput.value) || 0;
+        });
+        
+        const percent = totalSets > 0 ? Math.round((filledSets / totalSets) * 100) : 0;
+        
+        document.getElementById('progress-percent').textContent = percent + '%';
+        document.getElementById('progress-percent').classList.toggle('complete', percent === 100);
+        document.getElementById('progress-bar-fill').style.width = percent + '%';
+        document.getElementById('progress-sets').textContent = `Подходы: ${filledSets} / ${totalSets}`;
+        document.getElementById('progress-reps').textContent = `Повторы: ${totalReps}`;
     }
 
     function autoSave() {
@@ -600,7 +620,7 @@
             if(!draft[exId][setIdx]) draft[exId][setIdx] = {};
             draft[exId][setIdx].w = input.value ? parseFloat(input.value) : null;
         });
-        document.querySelectorAll('.set-input:not(.weight-input)').forEach(input => {
+        document.querySelectorAll('.reps-input').forEach(input => {
             const exId = input.dataset.ex, setIdx = parseInt(input.dataset.set);
             if(!draft[exId]) draft[exId] = [];
             if(!draft[exId][setIdx]) draft[exId][setIdx] = {};
@@ -621,7 +641,7 @@
         if (!date || !type) return alert('Ошибка: дата и группа обязательны!');
 
         const workout = { date, type, exercises: {} };
-        const weights = document.querySelectorAll('.weight-input'), reps = document.querySelectorAll('.set-input:not(.weight-input)');
+        const weights = document.querySelectorAll('.weight-input'), reps = document.querySelectorAll('.reps-input');
         let exIdx = 0;
         userPlan[type].forEach(ex => {
             const exType = ex.type || 'weight';
@@ -656,19 +676,13 @@
         document.getElementById('stat-push').textContent = history.filter(h => h.type === 'PUSH').length;
         document.getElementById('stat-legs').textContent = history.filter(h => h.type === 'LEGS').length;
         
-        let totalTonnage = 0, totalPotentialSets = 0, filledSets = 0;
+        let totalPotentialSets = 0, filledSets = 0;
         history.forEach(h => {
             Object.values(h.exercises).forEach(ex => {
                 totalPotentialSets += 3;
-                ex.forEach(s => {
-                    if (s) {
-                        if ((s.w !== null && s.w !== undefined) || (s.r !== null && s.r !== undefined)) filledSets++;
-                        if (s.w && s.r) totalTonnage += s.w * s.r;
-                    }
-                });
+                filledSets += ex.filter(s => (s.w !== null && s.w !== undefined) || (s.r !== null && s.r !== undefined)).length;
             });
         });
-        document.getElementById('stat-tonnage').textContent = totalTonnage > 1000 ? (totalTonnage/1000).toFixed(1) + 'т' : Math.round(totalTonnage);
         document.getElementById('stat-perf').textContent = totalPotentialSets ? Math.round((filledSets/totalPotentialSets)*100) + '%' : '0%';
     }
 
@@ -738,99 +752,10 @@
         });
     }
 
-    function updateVolumeChart() {
-        const history = JSON.parse(localStorage.getItem('fitnessHistory') || '[]');
-        const sorted = [...history].sort((a,b) => new Date(a.date) - new Date(b.date));
-        const labels = sorted.map(h => h.date);
-        const data = sorted.map(h => {
-            let vol = 0;
-            Object.values(h.exercises).forEach(ex => {
-                ex.forEach(s => { if (s && s.w && s.r) vol += s.w * s.r; });
-            });
-            return vol;
-        });
-
-        if (volumeChart) volumeChart.destroy();
-        const ctx = document.getElementById('volumeChart').getContext('2d');
-        const gradient = ctx.createLinearGradient(0, 0, 0, 250);
-        gradient.addColorStop(0, 'rgba(192, 132, 252, 0.8)');
-        gradient.addColorStop(1, 'rgba(192, 132, 252, 0.1)');
-        
-        volumeChart = new Chart(ctx, {
-            type: 'bar',
-            data: { labels, datasets: [{ label: 'Тоннаж (кг)', data, backgroundColor: gradient, borderColor: '#c084fc', borderWidth: 1 }] },
-            options: { 
-                responsive: true, maintainAspectRatio: false,
-                plugins: { legend: { labels: { color: '#ccc', font: { size: 10 } } } },
-                scales: { 
-                    y: { ticks: { color: '#888' }, grid: { color: '#222' } }, 
-                    x: { ticks: { color: '#888', font: { size: 9 } }, grid: { color: '#222' } } 
-                } 
-            }
-        });
-    }
-
-    function renderMuscleMap() {
-        const history = JSON.parse(localStorage.getItem('fitnessHistory') || '[]');
-        const muscleVolume = {};
-        
-        // Считаем суммарный объём по каждой мышце за ВСЕ тренировки
-        history.forEach(h => {
-            Object.entries(h.exercises).forEach(([exId, sets]) => {
-                const distribution = MUSCLE_DISTRIBUTION[exId];
-                if (!distribution) return;
-                let volume = 0;
-                sets.forEach(s => {
-                    if (s) {
-                        if (s.w && s.r) volume += s.w * s.r;
-                        else if (s.r) volume += s.r * 10; // условный объём
-                    }
-                });
-                Object.entries(distribution).forEach(([muscle, coeff]) => {
-                    muscleVolume[muscle] = (muscleVolume[muscle] || 0) + volume * coeff;
-                });
-            });
-        });
-        
-        const maxVol = Math.max(...Object.values(muscleVolume), 1);
-        
-        // Применяем цвет к каждой мышце
-        document.querySelectorAll('.muscle').forEach(el => {
-            const muscle = el.dataset.muscle;
-            const vol = muscleVolume[muscle] || 0;
-            const intensity = Math.pow(vol / maxVol, 0.6); // нелинейная шкала для лучшей видимости
-            
-            // Интерполяция: серый → фиолетовый → золотой
-            let r, g, b;
-            if (intensity < 0.5) {
-                const t = intensity * 2;
-                r = Math.round(42 + t * (192 - 42));
-                g = Math.round(42 + t * (132 - 42));
-                b = Math.round(58 + t * (252 - 58));
-            } else {
-                const t = (intensity - 0.5) * 2;
-                r = Math.round(192 + t * (251 - 192));
-                g = Math.round(132 + t * (191 - 132));
-                b = Math.round(252 + t * (36 - 252));
-            }
-            el.style.fill = `rgb(${r},${g},${b})`;
-            el.style.opacity = 0.5 + intensity * 0.5;
-        });
-        
-        // Легенда
-        const legend = document.getElementById('muscle-legend');
-        const sortedMuscles = Object.entries(muscleVolume).sort((a,b) => b[1] - a[1]);
-        legend.innerHTML = sortedMuscles.map(([m, v]) => {
-            const pct = Math.round((v / maxVol) * 100);
-            return `<div class="legend-item"><span class="legend-name">${MUSCLE_NAMES[m] || m}</span><span class="legend-val">${pct}%</span></div>`;
-        }).join('');
-    }
-
     function renderPRList() {
         const history = JSON.parse(localStorage.getItem('fitnessHistory') || '[]');
         const prs = {};
         
-        // Собираем все упражнения из плана
         const allExercises = {};
         Object.values(userPlan).flat().forEach(ex => { allExercises[ex.id] = ex.name; });
         
@@ -913,28 +838,62 @@
         const container = document.getElementById('settings-container');
         if (!group) { container.innerHTML = ''; return; }
         const groupName = { PULL: 'Спина и бицепс', PUSH: 'Грудь и трицепс', LEGS: 'Ноги и ягодицы' }[group];
-        let html = `<div class="settings-group"><h3 style="color:var(--accent)">${groupName}</h3>`;
+        
+        let html = `<div class="settings-group"><h3>${groupName}</h3>`;
+        
         userPlan[group].forEach((ex, idx) => {
             const exType = ex.type || 'weight';
-            html += `<div class="settings-ex-item">
-                <input type="text" style="flex:1; text-align:left; padding:5px" value="${ex.name}" onchange="updateExName('${group}', ${idx}, this.value)">
-                <input type="number" style="width:60px; padding:5px" value="${ex.start}" onchange="updateStartWeight('${group}', ${idx}, this.value)">
-                <div class="type-toggle">
-                    <div class="type-btn ${exType === 'weight' ? 'active' : ''}" onclick="toggleExType('${group}', ${idx}, 'weight')">Вес</div>
-                    <div class="type-btn ${exType === 'reps' ? 'active' : ''}" onclick="toggleExType('${group}', ${idx}, 'reps')">Повторы</div>
+            html += `
+            <div class="settings-ex-card">
+                <div class="ex-card-header">
+                    <div class="ex-card-title">
+                        <span class="ex-card-number">${idx + 1}</span>
+                        <input type="text" value="${ex.name}" onchange="updateExName('${group}', ${idx}, this.value)" placeholder="Название">
+                    </div>
+                    <button class="btn-del" onclick="deleteExercise('${group}', ${idx})">Удалить</button>
                 </div>
-                <button class="btn-del" onclick="deleteExercise('${group}', ${idx})">✕</button>
+                <div class="ex-card-body">
+                    <div class="ex-card-field">
+                        <label>Старт (кг / пов)</label>
+                        <input type="number" value="${ex.start}" onchange="updateStartWeight('${group}', ${idx}, this.value)">
+                    </div>
+                    <div class="ex-card-field">
+                        <label>Тип упражнения</label>
+                        <div class="type-toggle">
+                            <button type="button" class="type-btn ${exType === 'weight' ? 'active' : ''}" onclick="toggleExType('${group}', ${idx}, 'weight')">Вес</button>
+                            <button type="button" class="type-btn ${exType === 'reps' ? 'active' : ''}" onclick="toggleExType('${group}', ${idx}, 'reps')">Повторы</button>
+                        </div>
+                    </div>
+                </div>
             </div>`;
         });
-        html += `<div class="add-ex-form">
-            <input type="text" id="new-name-${group}" placeholder="Название">
-            <input type="number" id="new-start-${group}" placeholder="значение">
-            <div class="type-toggle">
-                <div class="type-btn active" id="new-type-weight-${group}" onclick="setNewType('${group}', 'weight')">Вес</div>
-                <div class="type-btn" id="new-type-reps-${group}" onclick="setNewType('${group}', 'reps')">Повторы</div>
+        
+        html += `
+        <div class="add-ex-card">
+            <div class="add-ex-title">➕ Новое упражнение</div>
+            <div class="add-ex-fields">
+                <div class="ex-card-field">
+                    <label>Название</label>
+                    <input type="text" id="new-name-${group}" placeholder="Например: Жим Арнольда">
+                </div>
+                <div class="add-ex-row">
+                    <div class="ex-card-field">
+                        <label>Старт (кг / пов)</label>
+                        <input type="number" id="new-start-${group}" placeholder="0">
+                    </div>
+                    <div class="ex-card-field">
+                        <label>Тип</label>
+                        <div class="type-toggle">
+                            <button type="button" class="type-btn active" id="new-type-weight-${group}" onclick="setNewType('${group}', 'weight')">Вес</button>
+                            <button type="button" class="type-btn" id="new-type-reps-${group}" onclick="setNewType('${group}', 'reps')">Повторы</button>
+                        </div>
+                    </div>
+                </div>
+                <button type="button" class="btn-add-main" onclick="addExercise('${group}')">+ Добавить</button>
             </div>
-            <button class="btn-add" onclick="addExercise('${group}')">+</button>
-        </div></div>`;
+        </div>`;
+        
+        html += `</div>`;
         container.innerHTML = html;
     }
 
