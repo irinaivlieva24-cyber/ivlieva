@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Fitness OS: Pro Edition</title>
+    <title>Fitness OS: Evolution Edition</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
@@ -16,6 +16,7 @@
             --text-dim: #94a3b8;
             --success: #4ade80;
             --danger: #f87171;
+            --gold: #fbbf24;
             --glass: rgba(255, 255, 255, 0.03);
             --glass-border: rgba(255, 255, 255, 0.08);
         }
@@ -78,12 +79,7 @@
             color: white; border-radius: 12px; font-size: 15px; outline: none;
             width: 100%; box-sizing: border-box;
         }
-
-        /* WORKOUT PROGRESS BAR */
-        .progress-wrap { margin-bottom: 20px; }
-        .progress-info { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-dim); margin-bottom: 5px; }
-        .progress-bar-bg { background: #1a1a2a; height: 8px; border-radius: 4px; overflow: hidden; border: 1px solid var(--glass-border); }
-        .progress-bar-fill { height: 100%; background: var(--accent); width: 0%; transition: width 0.3s ease; box-shadow: 0 0 10px var(--accent); }
+        .input-date { width: 90%; margin: 0 auto; display: block; }
 
         /* Workout Layout */
         .ex-row { 
@@ -93,10 +89,11 @@
         .ex-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
         .ex-name { font-weight: 600; font-size: 15px; color: #fff; }
         .ex-start { font-size: 11px; color: var(--accent); }
+        .ex-start.increase { color: var(--gold); font-weight: 700; text-shadow: 0 0 5px var(--gold); }
         
         .sets-grid { display: flex; flex-direction: column; gap: 8px; }
         .set-box { 
-            background: #1a1a2a; padding: 10px 12px; border-radius: 14px; 
+            background: #1a1a2a; padding: 8px 12px; border-radius: 14px; 
             display: flex; align-items: center; justify-content: space-between;
             border: 1px solid var(--glass-border);
         }
@@ -108,13 +105,19 @@
             border-radius: 8px; outline: none;
         }
 
+        .increase-checkbox-row { 
+            display: flex; align-items: center; gap: 10px; 
+            margin-top: 15px; padding-top: 10px; border-top: 1px solid var(--glass-border);
+            font-size: 12px; color: var(--text-dim);
+        }
+        .increase-checkbox-row input { width: 18px; height: 18px; cursor: pointer; }
+
         .btn-main { 
             width: 100%; padding: 16px; background: linear-gradient(135deg, var(--accent), var(--accent-dark)); 
             color: #ffffff !important; border: none; border-radius: 15px; font-size: 15px; 
             cursor: pointer; font-weight: 700; margin-top: 20px; transition: 0.3s; 
             text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 8px 15px var(--accent-glow);
         }
-        .btn-main:active { transform: scale(0.98); }
 
         /* Goals */
         .goal-item { background: #1c1c2b; padding: 15px; border-radius: 18px; margin-bottom: 12px; border: 1px solid var(--glass-border); }
@@ -129,7 +132,6 @@
             background: var(--glass); padding: 10px; border-radius: 12px; margin-bottom: 8px; 
             border: 1px solid var(--glass-border);
         }
-        .settings-ex-item input { padding: 5px; border-radius: 6px; font-size: 13px; }
         .btn-del { background: none; color: var(--danger); border: 1px solid var(--danger); padding: 4px 8px; border-radius: 6px; cursor: pointer; font-size: 11px; }
 
         .add-ex-form { display: grid; grid-template-columns: 1fr 70px auto; gap: 8px; margin-top: 12px; }
@@ -138,7 +140,13 @@
 
         /* Metrics */
         .metrics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .chart-section { background: #16162_5; padding: 15px; border-radius: 20px; margin-top: 20px; border: 1px solid var(--glass-border); height: 350px; }
+        .chart-section { background: #161625; padding: 15px; border-radius: 20px; margin-top: 20px; border: 1px solid var(--glass-border); height: 280px; }
+        .reminder-banner { 
+            background: rgba(192, 132, 252, 0.15); border: 1px solid var(--accent); 
+            padding: 12px; border-radius: 15px; margin-bottom: 20px; 
+            font-size: 13px; color: var(--accent); text-align: center;
+            display: none;
+        }
 
         /* Summary */
         .summary-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 20px; }
@@ -165,18 +173,9 @@
     
     <div id="tab-add" class="card active">
         <h2 style="color: #fff;">⚡️ ТРЕНИРОВКА</h2>
-        
-        <div class="progress-wrap">
-            <div class="progress-info">
-                <span>Прогресс сессии</span>
-                <span id="progress-percent">0%</span>
-            </div>
-            <div class="progress-bar-bg"><div class="progress-bar-fill" id="progress-fill"></div></div>
-        </div>
-
         <div class="form-group">
             <label>Дата</label>
-            <input type="date" id="workout-date" onchange="checkExistingWorkout()">
+            <input type="date" id="workout-date" class="input-date" onchange="checkExistingWorkout()">
         </div>
         <div class="form-group">
             <label>Направление</label>
@@ -199,11 +198,12 @@
             <div class="summary-box"><span class="summary-val" id="stat-pull">-</span><span class="summary-lab">Спина и бицепс</span></div>
             <div class="summary-box"><span class="summary-val" id="stat-push">-</span><span class="summary-lab">Грудь и трицепс</span></div>
             <div class="summary-box" style="grid-column: span 2;"><span class="summary-val" id="stat-legs">-</span><span class="summary-lab">Ноги и ягодицы</span></div>
+            <div class="summary-box" style="grid-column: span 2;"><span class="summary-val" id="stat-perf">-</span><span class="summary-lab">Общая полнота плана %</span></div>
         </div>
         <div class="form-group">
             <label>Анализ группы</label>
             <select id="chart-group-select" onchange="updateGroupChart()">
-                <option value="P own">Спина и бицепс</option>
+                <option value="PULL">Спина и бицепс</option>
                 <option value="PUSH">Грудь и трицепс</option>
                 <option value="LEGS">Ноги и ягодицы</option>
             </select>
@@ -231,6 +231,7 @@
 
     <div id="tab-metrics" class="card">
         <h2 style="color: #fff;">📏 ЗАМЕРЫ</h2>
+        <div id="metrics-reminder" class="reminder-banner">📏 Пора провести контрольные замеры!</div>
         <div class="metrics-grid">
             <div class="form-group"><label>Вес (кг)</label><input type="number" id="m-weight" step="0.1"></div>
             <div class="form-group"><label>Бедра (см)</label><input type="number" id="m-hips"></div>
@@ -238,7 +239,8 @@
             <div class="form-group"><label>Талия (см)</label><input type="number" id="m-waist"></div>
         </div>
         <button class="btn-main" onclick="saveMetrics()">Сохранить замеры</button>
-        <div class="chart-section"><canvas id="metricsChart"></canvas></div>
+        <div class="chart-section"><canvas id="weightChart"></canvas></div>
+        <div class="chart-section"><canvas id="dimsChart"></canvas></div>
     </div>
 
     <div id="tab-settings" class="card">
@@ -253,7 +255,6 @@
             </select>
         </div>
         <div id="settings-container"></div>
-        
         <div style="margin-top: 40px; border-top: 1px solid var(--glass-border); padding-top: 20px;">
             <button class="btn-main" style="background: rgba(239, 68, 68, 0.2); color: var(--danger) !important; box-shadow: none;" onclick="confirmReset()">Сбросить данные</button>
         </div>
@@ -297,7 +298,7 @@
     };
 
     let userPlan = JSON.parse(localStorage.getItem('userPlan')) || DEFAULT_PLAN;
-    let myChart = null, metricsChart = null;
+    let myChart = null, wChart = null, dChart = null;
 
     function initApp() {
         document.getElementById('workout-date').valueAsDate = new Date();
@@ -313,10 +314,9 @@
         if (activeNav) activeNav.classList.add('active');
         if(tab === 'stats') { updateSummary(); updateGroupChart(); }
         if(tab === 'goals') renderGoals();
-        if(tab === 'metrics') renderMetricsChart();
+        if(tab === 'metrics') { checkMeasurementReminder(); renderMetricsChart(); }
     }
 
-    // --- РАБОЧИЙ ВЕС ---
     function getWorkingWeight(exId) {
         const history = JSON.parse(localStorage.getItem('fitnessHistory') || '[]');
         let max = 0;
@@ -329,13 +329,18 @@
         return max;
     }
 
+    function shouldIncrease(exId) {
+        const history = JSON.parse(localStorage.getItem('fitnessHistory') || '[]');
+        const lastSession = history.filter(h => h.exercises[exId]).sort((a,b) => new Date(b.date) - new Date(a.date))[0];
+        return lastSession ? lastSession.exercises[exId].canIncrease : false;
+    }
+
     function renderExerciseList() {
         const type = document.getElementById('workout-type').value;
         const date = document.getElementById('workout-date').value;
         const container = document.getElementById('exercise-list-container');
         if (!type) { container.innerHTML = ''; return; }
 
-        // Загрузка автосохранения или существующей тренировки
         const history = JSON.parse(localStorage.getItem('fitnessHistory') || '[]');
         const existing = history.find(h => h.date === date && h.type === type);
         const draft = JSON.parse(localStorage.getItem('currentDraft') || '{}');
@@ -343,36 +348,37 @@
         let html = '';
         userPlan[type].forEach(ex => {
             const workingWeight = getWorkingWeight(ex.id);
-            const weightLabel = workingWeight > 0 ? `Рекорд: ${workingWeight}кг` : `Старт: ${ex.start}кг`;
+            const needsIncrease = shouldIncrease(ex.id);
+            const label = workingWeight > 0 ? `Рабочий вес: ${workingWeight}кг (макс)` : `Старт: ${ex.start}кг`;
             
-            // Получаем значения для полей (сначала из черновика, потом из истории)
             const setsData = (draft && draft[ex.id]) ? draft[ex.id] : (existing && existing.exercises[ex.id] ? existing.exercises[ex.id] : []);
 
             html += `
             <div class="ex-row">
                 <div class="ex-header">
                     <span class="ex-name">${ex.name}</span>
-                    <span class="ex-start">${weightLabel}</span>
+                    <span class="ex-start ${needsIncrease ? 'increase' : ''}">${needsIncrease ? '🚀 Пора прибавить! ' : ''}${label}</span>
                 </div>
                 <div class="sets-grid">
                     ${[0,1,2].map(i => `
                         <div class="set-box">
-                            <span class="set-label">Сет ${i+1}</span>
+                            <span class="set-label">Подход ${i+1}</span>
                             <div class="input-pair">
                                 <input type="number" class="set-w" data-ex="${ex.id}" data-set="${i}" 
-                                    value="${setsData[i] ? setsData[i].w : ''}" placeholder="кг" 
-                                    oninput="autoSave()">
+                                    value="${setsData[i] ? setsData[i].w : ''}" placeholder="кг" oninput="autoSave()">
                                 <input type="number" class="set-r" data-ex="${ex.id}" data-set="${i}" 
-                                    value="${setsData[i] ? setsData[i].r : ''}" placeholder="пов" 
-                                    oninput="autoSave()">
+                                    value="${setsData[i] ? setsData[i].r : ''}" placeholder="пов" oninput="autoSave()">
                             </div>
                         </div>
                     `).join('')}
                 </div>
+                <div class="increase-checkbox-row">
+                    <input type="checkbox" class="set-inc" data-ex="${ex.id}" ${ (draft && draft[ex.id + '_inc']) ? 'checked' : (existing && existing.exercises[ex.id]?.canIncrease ? 'checked' : '') } onchange="autoSaveInc(${ex.id}, this.checked)">
+                    <span>Можно переходить на новый вес</span>
+                </div>
             </div>`;
         });
         container.innerHTML = html;
-        updateProgress();
     }
 
     function autoSave() {
@@ -380,50 +386,35 @@
         const date = document.getElementById('workout-date').value;
         if(!type || !date) return;
 
-        const draft = {};
+        const draft = JSON.parse(localStorage.getItem('currentDraft') || '{}');
         document.querySelectorAll('.set-w').forEach(input => {
-            const exId = input.dataset.ex;
-            const setIdx = parseInt(input.dataset.set);
+            const exId = input.dataset.ex, setIdx = parseInt(input.dataset.set);
             if(!draft[exId]) draft[exId] = [];
             if(!draft[exId][setIdx]) draft[exId][setIdx] = {};
             draft[exId][setIdx].w = input.value;
         });
         document.querySelectorAll('.set-r').forEach(input => {
-            const exId = input.dataset.ex;
-            const setIdx = parseInt(input.dataset.set);
+            const exId = input.dataset.ex, setIdx = parseInt(input.dataset.set);
             if(!draft[exId]) draft[exId] = [];
-            if(!draft[exId][setIdx]) draft[exId][setIdx] = {};
+            if(!draft[exId][setIdx]) draft[exHId][setIdx] = {};
             draft[exId][setIdx].r = input.value;
         });
-
         localStorage.setItem('currentDraft', JSON.stringify(draft));
-        updateProgress();
     }
 
-    function updateProgress() {
-        const weights = document.querySelectorAll('.set-w');
-        const reps = document.querySelectorAll('.set-r');
-        let filled = 0;
-        const total = weights.length * 2;
-
-        weights.forEach(i => { if(i.value) filled++; });
-        reps.forEach(i => { if(i.value) filled++; });
-
-        const percent = Math.round((filled / total) * 100);
-        document.getElementById('progress-percent').textContent = percent + '%';
-        document.getElementById('progress-fill').style.width = percent + '%';
+    function autoSaveInc(exId, val) {
+        const draft = JSON.parse(localStorage.getItem('currentDraft') || '{}');
+        draft[exId + '_inc'] = val;
+        localStorage.setItem('currentDraft', JSON.stringify(draft));
     }
 
     function checkExistingWorkout() {
         const date = document.getElementById('workout-date').value;
         const type = document.getElementById('workout-type').value;
         if(!type) return;
-        
         const history = JSON.parse(localStorage.getItem('fitnessHistory') || '[]');
         const exists = history.find(h => h.date === date && h.type === type);
-        if(exists) {
-            alert('На эту дату уже есть тренировка данной группы. Вы можете отредактировать её.');
-        }
+        if(exists) alert('На эту дату уже есть тренировка. Вы можете отредактировать её.');
         renderExerciseList();
     }
 
@@ -433,26 +424,24 @@
         if (!date || !type) return alert('Ошибка: дата и группа обязательны!');
 
         const workout = { date, type, exercises: {} };
-        const weights = document.querySelectorAll('.set-w');
-        const reps = document.querySelectorAll('.set-r');
+        const weights = document.querySelectorAll('.set-w'), reps = document.querySelectorAll('.set-r');
         let exIdx = 0;
         userPlan[type].forEach(ex => {
             const sets = [];
             for(let i=0; i<3; i++) {
-                const w = weights[exIdx * 3 + i].value;
-                const r = reps[exIdx * 3 + i].value;
+                const w = weights[exIdx * 3 + i].value, r = reps[exIdx * 3 + i].value;
                 if(w && r) sets.push({ w: parseFloat(w), r: parseInt(r) });
             }
             workout.exercises[ex.id] = sets;
+            workout.exercises[ex.id].canIncrease = document.querySelector(`.increase-checkbox-row input[data-ex="${ex.id}"]`)?.checked || false;
             exIdx++;
         });
 
         let history = JSON.parse(localStorage.getItem('fitnessHistory') || '[]');
-        // Удаляем старую запись на эту же дату и группу, если она была (1 день = 1 треня)
         history = history.filter(h => !(h.date === date && h.type === type));
         history.push(workout);
         localStorage.setItem('fitnessHistory', JSON.stringify(history));
-        localStorage.removeItem('currentDraft'); // Очищаем черновик
+        localStorage.removeItem('currentDraft');
         alert('Прогресс зафиксирован! 💪');
         location.reload();
     }
@@ -464,6 +453,16 @@
         document.getElementById('stat-pull').textContent = history.filter(h => h.type === 'PULL').length;
         document.getElementById('stat-push').textContent = history.filter(h => h.type === 'PUSH').length;
         document.getElementById('stat-legs').textContent = history.filter(h => h.type === 'LEGS').length;
+        
+        // Calculation of total fulfillment %
+        let totalPotentialSets = 0, filledSets = 0;
+        history.forEach(h => {
+            Object.values(h.exercises).forEach(ex => {
+                totalPotentialSets += 3;
+                filledSets += ex.filter(s => s && s.w).length;
+            });
+        });
+        document.getElementById('stat-perf').textContent = totalPotentialSets ? Math.round((filledSets/totalPotentialSets)*100) + '%' : '0%';
     }
 
     function updateGroupChart() {
@@ -478,26 +477,14 @@
                 const session = history.find(h => h.date === date);
                 return (session && session.exercises[ex.id]) ? Math.max(...session.exercises[ex.id].map(s => s.w)) : null;
             });
-            datasets.push({
-                label: ex.name,
-                data: data,
-                borderColor: `hsl(${idx * 70}, 70%, 60%)`,
-                tension: 0.4,
-                spanGaps: true,
-                pointRadius: 4
-            });
+            datasets.push({ label: ex.name, data, borderColor: `hsl(${idx * 70}, 70%, 60%)`, tension: 0.4, spanGaps: true, pointRadius: 4 });
         });
 
         if (myChart) myChart.destroy();
         myChart = new Chart(document.getElementById('groupChart').getContext('2d'), {
-            type: 'line',
-            data: { labels, datasets },
-            options: { 
-                responsive: true, 
-                maintainAspectRatio: false,
-                plugins: { legend: { position: 'bottom', labels: { color: '#ccc', font: { size: 10 } } } },
-                scales: { y: { ticks: { color: '#888' }, grid: { color: '#222' } }, x: { ticks: { color: '#888' }, grid: { color: '#222' } } }
-            }
+            type: 'line', data: { labels, datasets },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: '#ccc', font: { size: 10 } } } },
+            scales: { y: { ticks: { color: '#888' }, grid: { color: '#222' } }, x: { ticks: { color: '#888' }, grid: { color: '#222' } } } }
         });
     }
 
@@ -517,31 +504,16 @@
         const select = document.getElementById('goal-ex-id');
         select.innerHTML = '';
         Object.values(userPlan).flat().forEach(ex => { select.innerHTML += `<option value="${ex.id}">${ex.name}</option>`; });
-
         let html = '';
         goals.forEach((g, i) => {
             let currentMax = 0;
-            history.forEach(sess => {
-                if(sess.exercises[g.exId]) {
-                    const max = Math.max(...sess.exercises[g.exId].map(s => s.w));
-                    if(max > currentMax) currentMax = max;
-                }
-            });
+            history.forEach(sess => { if(sess.exercises[g.exId]) { const max = Math.max(...sess.exercises[g.exId].map(s => s.w)); if(max > currentMax) currentMax = max; } });
             const groupKey = Object.keys(userPlan).find(k => userPlan[k].some(e => e.id === g.exId));
             const startVal = userPlan[groupKey].find(e => e.id === g.exId).start;
             const progress = Math.min(100, Math.max(0, ((currentMax - startVal) / (g.value - startVal)) * 100)) || 0;
-            
-            html += `<div class="goal-item">
-                <div style="display:flex; justify-content:space-between; font-size:14px;">
-                    <strong style="color:var(--text); white-space: normal;">${g.name}</strong>
-                    <span style="color:var(--accent)">${currentMax} / ${g.value} кг</span>
-                </div>
-                <div class="progress-container"><div class="progress-bar" style="width:${progress}%"></div></div>
-                <div style="display:flex; justify-content:space-between; font-size:11px; color:var(--text-dim)">
-                    <span>Прогресс: ${Math.round(progress)}%</span>
-                    <span style="color:var(--danger); cursor:pointer" onclick="deleteGoal(${i})">Удалить</span>
-                </div>
-            </div>`;
+            html += `<div class="goal-item"><div style="display:flex; justify-content:space-between; font-size:14px;"><strong style="color:var(--text); white-space: normal;">${g.name}</strong><span style="color:var(--accent)">${currentMax} / ${g.value} кг</span></div>
+            <div class="progress-container"><div class="progress-bar" style="width:${progress}%"></div></div>
+            <div style="display:flex; justify-content:space-between; font-size:11px; color:var(--text-dim)"><span>Прогресс: ${Math.round(progress)}%</span><span style="color:var(--danger); cursor:pointer" onclick="deleteGoal(${i})">Удалить</span></div></div>`;
         });
         container.innerHTML = html;
     }
@@ -562,23 +534,36 @@
         alert('Замеры сохранены!');
     }
 
+    function checkMeasurementReminder() {
+        const history = JSON.parse(localStorage.getItem('metricsHistory') || '[]');
+        if(history.length === 0) return;
+        const lastDate = new Date(history[history.length-1].date);
+        const now = new Date();
+        const diffDays = Math.floor((now - lastDate) / (1000 * 60 * 60 * 24));
+        document.getElementById('metrics-reminder').style.display = diffDays >= 30 ? 'block' : 'none';
+    }
+
     function renderMetricsChart() {
         const history = JSON.parse(localStorage.getItem('metricsHistory') || '[]');
         const labels = history.map(h => h.date);
-        const datasets = [
-            { label: 'Вес', data: history.map(h => h.w), borderColor: '#bb86fc', tension: 0.4 },
-            { label: 'Бедра', data: history.map(h => h.h), borderColor: '#03dac6', tension: 0.4 },
-            { label: 'Грудь', data: history.map(h => h.c), borderColor: '#f87171', tension: 0.4 },
-            { label: 'Талия', data: history.map(h => h.wa), borderColor: '#fbbf24', tension: 0.4 }
+        
+        const weightData = history.map(h => h.w);
+        const dimData = [
+            { label: 'Бедра', data: history.map(h => h.h), color: '#03dac6' },
+            { label: 'Грудь', data: history.map(h => h.c), color: '#f87171' },
+            { label: 'Талия', data: history.map(h => h.wa), color: '#fbbf24' }
         ];
-        if (metricsChart) metricsChart.destroy();
-        metricsChart = new Chart(document.getElementById('metricsChart').getContext('2d'), {
-            type: 'line', data: { labels, datasets },
-            options: { 
-                responsive: true, maintainAspectRatio: false,
-                plugins: { legend: { position: 'bottom', labels: { color: '#ccc', font: { size: 10 } } } }, 
-                scales: { y: { ticks: { color: '#888' }, grid: { color: '#222' } }, x: { ticks: { color: '#888' }, grid: { color: '#222' } } } 
-            }
+
+        if (wChart) wChart.destroy();
+        wChart = new Chart(document.getElementById('weightChart').getContext('2d'), {
+            type: 'line', data: { labels, datasets: [{ label: 'Вес (кг)', data: weightData, borderColor: '#bb86fc', tension: 0.4 }] },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: '#ccc', font: { size: 10 } } } }, scales: { y: { ticks: { color: '#888' }, grid: { color: '#222' } }, x: { ticks: { color: '#888' }, grid: { color: '#222' } } } }
+        });
+
+        if (dChart) dChart.destroy();
+        dChart = new Chart(document.getElementById('dimsChart').getContext('2d'), {
+            type: 'line', data: { labels, datasets: dimData.map(d => ({ label: d.label, data: d.data, borderColor: d.color, tension: 0.4 })) },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: '#ccc', font: { size: 10 } } } }, scales: { y: { ticks: { color: '#888' }, grid: { color: '#222' } }, x: { ticks: { color: '#888' }, grid: { color: '#222' } } } }
         });
     }
 
@@ -586,54 +571,28 @@
         const group = document.getElementById('settings-group-select').value;
         const container = document.getElementById('settings-container');
         if (!group) { container.innerHTML = ''; return; }
-
         const groupName = { PULL: 'Спина и бицепс', PUSH: 'Грудь и трицепс', LEGS: 'Ноги и ягодицы' }[group];
         let html = `<div class="settings-group"><h3 style="color:var(--accent)">${groupName}</h3>`;
         userPlan[group].forEach((ex, idx) => {
-            html += `
-            <div class="settings-ex-item">
-                <input type="text" style="flex:1; text-align:left; padding:5px" value="${ex.name}" onchange="updateExName('${group}', ${idx}, this.value)">
-                <input type="number" style="width:60px; padding:5px" value="${ex.start}" onchange="updateStartWeight('${group}', ${idx}, this.value)">
-                <button class="btn-del" onclick="deleteExercise('${group}', ${idx})">✕</button>
-            </div>`;
+            html += `<div class="settings-ex-item"><input type="text" style="flex:1; text-align:left; padding:5px" value="${ex.name}" onchange="updateExName('${group}', ${idx}, this.value)">
+            <input type="number" style="width:60px; padding:5px" value="${ex.start}" onchange="updateStartWeight('${group}', ${idx}, this.value)">
+            <button class="btn-del" onclick="deleteExercise('${group}', ${idx})">✕</button></div>`;
         });
-        
-        html += `
-            <div class="add-ex-form">
-                <input type="text" id="new-name-${group}" placeholder="Название">
-                <input type="number" id="new-start-${group}" placeholder="кг">
-                <button class="btn-add" onclick="addExercise('${group}')">+</button>
-            </div>
-        `;
-        html += `</div>`;
+        html += `<div class="add-ex-form"><input type="text" id="new-name-${group}" placeholder="Название"><input type="number" id="new-start-${group}" placeholder="кг"><button class="btn-add" onclick="addExercise('${group}')">+</button></div></div>`;
         container.innerHTML = html;
     }
 
-    function updateExName(group, idx, val) {
-        userPlan[group][idx].name = val;
-        localStorage.setItem('userPlan', JSON.stringify(userPlan));
-    }
-
-    function updateStartWeight(group, idx, val) {
-        userPlan[group][idx].start = parseFloat(val);
-        localStorage.setItem('userPlan', JSON.stringify(userPlan));
-    }
-
+    function updateExName(group, idx, val) { userPlan[group][idx].name = val; localStorage.setItem('userPlan', JSON.stringify(userPlan)); }
+    function updateStartWeight(group, idx, val) { userPlan[group][idx].start = parseFloat(val); localStorage.setItem('userPlan', JSON.stringify(userPlan)); }
     function addExercise(group) {
-        const name = document.getElementById(`new-name-${group}`).value;
-        const start = parseFloat(document.getElementById(`new-start-${group}`).value);
+        const name = document.getElementById(`new-name-${group}`).value, start = parseFloat(document.getElementById(`new-start-${group}`).value);
         if(!name) return alert('Введите название!');
         userPlan[group].push({ id: 'custom_' + Date.now(), name: name, start: start || 0 });
         localStorage.setItem('userPlan', JSON.stringify(userPlan));
         renderSettingsGroup();
     }
-
     function deleteExercise(group, idx) {
-        if(confirm('Удалить упражнение?')) {
-            userPlan[group].splice(idx, 1);
-            localStorage.setItem('userPlan', JSON.stringify(userPlan));
-            renderSettingsGroup();
-        }
+        if(confirm('Удалить упражнение?')) { userPlan[group].splice(idx, 1); localStorage.setItem('userPlan', JSON.stringify(userPlan)); renderSettingsGroup(); }
     }
 
     function confirmReset() { document.getElementById('reset-modal').style.display = 'flex'; }
@@ -651,6 +610,5 @@
         showTab('add');
     };
 </script>
-
 </body>
 </html>
