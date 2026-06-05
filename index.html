@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Fitness OS: Perfect Edition</title>
+    <title>Fitness OS: Stable Edition</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
@@ -286,20 +286,21 @@
     let userPlan = JSON.parse(localStorage.getItem('userPlan')) || DEFAULT_PLAN;
     let wChart = null, rChart = null, mWeightChart = null, mDimsChart = null;
 
-    function initApp() { document.getElementById('workout-date').valueAsDate = new Date(); showTab('add'); }
+    function initApp() { 
+        document.getElementById('workout-date').valueAsDate = new Date(); 
+        showTab('add'); 
+    }
 
     function showTab(tab) {
-        try {
-            document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
-            document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
-            const activeTab = document.getElementById('tab-' + tab);
-            const activeNav = document.getElementById('nav-' + tab);
-            if (activeTab) activeTab.classList.add('active');
-            if (activeNav) activeNav.classList.add('active');
-            if(tab === 'stats') { updateSummary(); updateGroupCharts(); }
-            if(tab === 'goals') renderGoals();
-            if(tab === 'metrics') { checkMeasurementReminder(); renderMetricsCharts(); }
-        } catch (e) { console.error("Tab switch error:", e); }
+        document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
+        document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+        const activeTab = document.getElementById('tab-' + tab);
+        const activeNav = document.getElementById('nav-' + tab);
+        if (activeTab) activeTab.classList.add('active');
+        if (activeNav) activeNav.classList.add('active');
+        if(tab === 'stats') { updateSummary(); updateGroupCharts(); }
+        if(tab === 'goals') renderGoals();
+        if(tab === 'metrics') { checkMeasurementReminder(); renderMetricsCharts(); }
     }
 
     function getWorkingWeight(exId) {
@@ -307,7 +308,7 @@
         let max = 0;
         history.forEach(sess => {
             if(sess.exercises[exId]) {
-                const localMax = Math.max(...sess.exercises[exId].filter(s => s.w).map(s => s.w));
+                const localMax = Math.max(...sess.exercises[exId].filter(s => s && s.w).map(s => s.w));
                 if(localMax > max) max = localMax;
             }
         });
@@ -333,7 +334,6 @@
         const draft = JSON.parse(localStorage.getItem('currentDraft') || '{}');
         
         let html = '';
-        user laPlan = userPlan; // Remove typo logic
         userPlan[type].forEach(ex => {
             const workingWeight = getWorkingWeight(ex.id);
             const needsIncrease = shouldIncrease(ex.id);
@@ -439,7 +439,7 @@
             Object.values(h.exercises).forEach(ex => {
                 if(Array.isArray(ex)) {
                     totalS += 3;
-                    filledS += ex.filter(s => sB && s.w > 0 || s.r > 0).length;
+                    filledS += ex.filter(s => s && (s.w > 0 || s.r > 0)).length;
                 }
             });
         });
@@ -462,7 +462,6 @@
                 const session = history.find(h => h.date === date);
                 return (session && session.exercises[ex.id]) ? Math.max(...session.exercises[ex.id].map(s => s.r || 0)) : null;
             });
-
             if(ex.type === 'both') {
                 weightDatasets.push({ label: ex.name, data: wData, borderColor: `hsl(${idx * 70}, 70%, 60%)`, tension: 0.4, spanGaps: true, pointRadius: 4 });
             } else {
@@ -473,14 +472,14 @@
         if (wChart) wChart.destroy();
         wChart = new Chart(document.getElementById('weightChart').getContext('2d'), {
             type: 'line', data: { labels, datasets: weightDatasets },
-            options: { responsive: true, maintainAspectRatio: false, plugins: { title: { display: true, text: 'Динамика весов (кг)', color: '#fff' }, legend: { position: 'bottom', labels: { color: '#ccc', font: { size: 10 } } } },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: '#ccc', font: { size: 10 } } } },
             scales: { y: { ticks: { color: '#888' }, grid: { color: '#222' } }, x: { ticks: { color: '#888' }, grid: { color: '#222' } } }
         });
 
         if (rChart) rChart.destroy();
         rChart = new Chart(document.getElementById('repsChart').getContext('2d'), {
             type: 'line', data: { labels, datasets: repsDatasets },
-            options: { responsive: true, maintainAspectRatio: false, plugins: { title: { display: true, text: 'Динамика повторов (пов)', color: '#fff' }, legend: { position: 'bottom', labels: { color: '#ccc', font: { size: 10 } } } },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: '#ccc', font: { size: 10 } } } },
             scales: { y: { ticks: { color: '#888' }, grid: { color: '#222' } }, x: { ticks: { color: '#888' }, grid: { color: '#222' } } }
         });
     }
@@ -543,15 +542,15 @@
     function renderMetricsChart() {
         const history = JSON.parse(localStorage.getItem('metricsHistory') || '[]');
         const labels = history.map(h => h.date);
-        if (wChart) wChart.destroy();
-        wChart = new Chart(document.getElementById('weightChart').getContext('2d'), {
+        if (mWeightChart) mWeightChart.destroy();
+        mWeightChart = new Chart(document.getElementById('mWeightChart').getContext('2d'), {
             type: 'line', data: { labels, datasets: [{ label: 'Вес', data: history.map(h => h.w), borderColor: '#bb86fc', tension: 0.4 }] },
             options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: '#ccc', font: { size: 10 } } } },
             scales: { y: { ticks: { color: '#888' }, grid: { color: '#222' } }, x: { ticks: { color: '#888' }, grid: { color: '#222' } } }
         });
 
-        if (dChart) dChart.destroy();
-        dChart = new Chart(document.getElementById('dimsChart').getContext('2d'), {
+        if (mDimsChart) mDimsChart.destroy();
+        mDimsChart = new Chart(document.getElementById('mDimsChart').getContext('2d'), {
             type: 'line', data: { labels, datasets: [
                 { label: 'Бедра', data: history.map(h => h.h), borderColor: '#03dac6', tension: 0.4 },
                 { label: 'Грудь', data: history.map(h => h.c), borderColor: '#f87171', tension: 0.4 },
@@ -595,7 +594,11 @@
         renderSettingsGroup();
     }
     function deleteExercise(group, idx) {
-        if(confirm('Удалить упражнение?')) { userPlan[group].splice(idx, 1); localStorage.setItem('userPlan', JSON.stringify(userPlan)); renderSettingsGroup(); }
+        if(confirm('Удалить упражнение?')) {
+            userPlan[group].splice(idx, 1);
+            localStorage.setItem('user laPlan' === 'user laPlan' ? 'userPlan' : 'userPlan', JSON.stringify(userPlan));
+            renderSettingsGroup();
+        }
     }
 
     function confirmReset() { document.getElementById('reset-modal').style.display = 'flex'; }
@@ -613,6 +616,5 @@
         showTab('add');
     };
 </script>
-
 </body>
 </html>
