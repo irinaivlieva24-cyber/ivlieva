@@ -15,6 +15,7 @@
             --text: #fdfdfd;
             --text-dim: #94a3b8;
             --success: #4ade80;
+            --success-glow: rgba(74, 222, 128, 0.4);
             --danger: #f87171;
             --gold: #fbbf24;
             --gold-glow: rgba(251, 191, 36, 0.5);
@@ -83,17 +84,43 @@
         }
         .input-date { width: 90%; margin: 0 auto; display: block; }
 
+        /* Status Badge */
+        .status-badge {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 700;
+            margin-bottom: 15px; width: 100%; justify-content: center;
+        }
+        .status-badge.draft { background: rgba(192, 132, 252, 0.15); color: var(--accent); border: 1px solid rgba(192, 132, 252, 0.3); }
+        .status-badge.finished { background: rgba(74, 222, 128, 0.15); color: var(--success); border: 1px solid rgba(74, 222, 128, 0.3); }
+
+        /* Progress Indicator */
+        .progress-indicator {
+            background: var(--glass); border: 1px solid var(--glass-border);
+            border-radius: 16px; padding: 14px 16px; margin: 18px 0;
+            display: none;
+        }
+        .progress-indicator.visible { display: block; }
+        .progress-indicator-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .progress-indicator-label { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
+        .progress-indicator-value { font-size: 18px; font-weight: 800; color: var(--accent); }
+        .progress-indicator-value.complete { color: var(--success); text-shadow: 0 0 10px var(--success-glow); }
+        .progress-indicator-track { background: #0a0a12; height: 6px; border-radius: 3px; overflow: hidden; }
+        .progress-indicator-fill { height: 100%; background: linear-gradient(to right, var(--accent), var(--success)); width: 0%; transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1); border-radius: 3px; }
+        .progress-indicator-sub { font-size: 11px; color: var(--text-dim); margin-top: 8px; display: flex; justify-content: space-between; }
+        .progress-indicator-sub strong { color: var(--text); }
+
         /* Workout Layout */
         .ex-row { 
             background: var(--glass); padding: 15px; 
             border-radius: 20px; margin-bottom: 12px; border: 1px solid var(--glass-border);
+            transition: 0.2s;
         }
+        .ex-row.finished-ex { border-color: rgba(74, 222, 128, 0.3); background: rgba(74, 222, 128, 0.03); }
         .ex-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px; }
         .ex-name { font-weight: 600; font-size: 15px; color: #fff; }
         .ex-start { font-size: 12px; color: var(--accent); }
         .ex-start.increase { 
-            color: var(--gold); 
-            font-weight: 700; 
+            color: var(--gold); font-weight: 700; 
             text-shadow: 0 0 8px var(--gold-glow);
             animation: pulseGold 1.5s ease-in-out infinite;
         }
@@ -106,9 +133,11 @@
         .set-box { 
             background: #1a1a2a; padding: 10px 14px; border-radius: 14px; 
             display: flex; align-items: center; justify-content: space-between;
-            border: 1px solid var(--glass-border);
+            border: 1px solid var(--glass-border); transition: 0.2s;
         }
+        .set-box.filled { border-color: rgba(192, 132, 252, 0.4); background: rgba(192, 132, 252, 0.06); }
         .set-label { font-size: 12px; color: var(--text-dim); text-transform: uppercase; font-weight: 600; min-width: 75px; }
+        .set-label.done { color: var(--success); }
         .input-pair { display: flex; gap: 10px; align-items: center; }
         .set-input { 
             width: 60px; padding: 8px; background: #25253a; border: 1px solid #333; 
@@ -125,49 +154,15 @@
         }
         .increase-checkbox-row input { width: 18px; height: 18px; cursor: pointer; accent-color: var(--gold); }
 
-        /* Индикатор прогресса тренировки */
-        .workout-progress {
-            background: linear-gradient(135deg, rgba(192, 132, 252, 0.1), rgba(126, 34, 206, 0.1));
-            border: 1px solid var(--glass-border);
-            padding: 14px 16px;
-            border-radius: 16px;
-            margin-bottom: 16px;
-            display: none;
-        }
-        .workout-progress.visible { display: block; }
-        .progress-header {
-            display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 10px;
-        }
-        .progress-title {
-            font-size: 11px; color: var(--text-dim);
-            text-transform: uppercase; letter-spacing: 1px; font-weight: 600;
-        }
-        .progress-percent {
-            font-size: 18px; font-weight: 800; color: var(--accent);
-            font-variant-numeric: tabular-nums;
-        }
-        .progress-percent.complete { color: var(--success); }
-        .progress-bar-wrap {
-            background: #0a0a12; height: 8px; border-radius: 4px; overflow: hidden;
-        }
-        .progress-bar-fill {
-            height: 100%;
-            background: linear-gradient(to right, var(--accent), var(--success));
-            width: 0%;
-            transition: width 0.4s ease;
-            border-radius: 4px;
-        }
-        .progress-details {
-            display: flex; justify-content: space-between;
-            margin-top: 8px; font-size: 11px; color: var(--text-dim);
-        }
-
         .btn-main { 
             width: 100%; padding: 16px; background: linear-gradient(135deg, var(--accent), var(--accent-dark)); 
             color: #ffffff !important; border: none; border-radius: 15px; font-size: 15px; 
             cursor: pointer; font-weight: 700; margin-top: 20px; transition: 0.3s; 
             text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 8px 15px var(--accent-glow);
+        }
+        .btn-main.finish-btn {
+            background: linear-gradient(135deg, var(--success), #16a34a);
+            box-shadow: 0 8px 15px var(--success-glow);
         }
 
         /* Metrics */
@@ -176,8 +171,7 @@
         .reminder-banner { 
             background: rgba(192, 132, 252, 0.15); border: 1px solid var(--accent); 
             padding: 12px; border-radius: 15px; margin-bottom: 20px; 
-            font-size: 13px; color: var(--accent); text-align: center;
-            display: none;
+            font-size: 13px; color: var(--accent); text-align: center; display: none;
         }
 
         /* Summary */
@@ -187,121 +181,71 @@
         .summary-lab { font-size: 11px; color: var(--text-dim); text-transform: uppercase; }
 
         /* PR List */
-        .pr-section { 
-            background: #161625; padding: 15px; border-radius: 20px; 
-            margin-top: 20px; border: 1px solid var(--glass-border);
-        }
+        .pr-section { background: #161625; padding: 15px; border-radius: 20px; margin-top: 20px; border: 1px solid var(--glass-border); }
         .pr-item { 
             display: flex; justify-content: space-between; align-items: center;
             padding: 10px 12px; background: var(--glass); border-radius: 12px;
             margin-bottom: 8px; border: 1px solid var(--glass-border);
         }
-        .pr-name { font-size: 13px; color: var(--text); }
-        .pr-val { font-size: 14px; font-weight: 700; color: var(--gold); }
+        .pr-name { font-size: 13px; color: var(--text); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .pr-val { font-size: 14px; font-weight: 700; color: var(--gold); margin-left: 10px; white-space: nowrap; }
+        .pr-date { font-size: 10px; color: var(--text-dim); margin-left: 8px; white-space: nowrap; }
 
-        /* Settings — новый дизайн */
+        /* Settings */
         .settings-group { margin-bottom: 25px; }
         .settings-group h3 { font-size: 16px; color: var(--accent); margin-bottom: 12px; padding-left: 10px; border-left: 3px solid var(--accent); }
-        
+        .settings-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
         .settings-ex-card {
-            background: linear-gradient(135deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-            padding: 14px;
-            border-radius: 16px;
-            margin-bottom: 10px;
-            border: 1px solid var(--glass-border);
-            position: relative;
-            transition: border-color 0.2s;
+            background: linear-gradient(135deg, rgba(192, 132, 252, 0.05), rgba(126, 34, 206, 0.02));
+            border: 1px solid var(--glass-border); border-radius: 16px; padding: 14px; transition: 0.2s;
         }
         .settings-ex-card:hover { border-color: rgba(192, 132, 252, 0.3); }
-        .ex-card-header {
-            display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 12px; padding-bottom: 10px;
-            border-bottom: 1px dashed var(--glass-border);
+        .settings-ex-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
+        .settings-ex-name {
+            flex: 1; background: #1c1c2b; border: 1px solid var(--glass-border);
+            padding: 8px 12px; border-radius: 10px; font-size: 14px; font-weight: 600; color: #fff; outline: none; transition: 0.2s;
         }
-        .ex-card-number {
-            display: inline-flex; align-items: center; justify-content: center;
-            width: 24px; height: 24px; border-radius: 8px;
-            background: var(--accent-dark); color: white;
-            font-size: 11px; font-weight: 700; margin-right: 10px;
+        .settings-ex-name:focus { border-color: var(--accent); }
+        .settings-ex-del {
+            width: 32px; height: 32px; background: rgba(248, 113, 113, 0.08);
+            border: 1px solid rgba(248, 113, 113, 0.25); color: var(--danger);
+            border-radius: 8px; cursor: pointer; font-size: 14px;
+            display: flex; align-items: center; justify-content: center; transition: 0.2s;
         }
-        .ex-card-title {
-            flex: 1; display: flex; align-items: center;
+        .settings-ex-del:hover { background: rgba(248, 113, 113, 0.2); }
+        .settings-ex-bottom { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+        .settings-start-group { display: flex; align-items: center; gap: 8px; }
+        .settings-start-label { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px; }
+        .settings-start-input {
+            width: 70px; padding: 6px 8px; background: #25253a; border: 1px solid var(--glass-border);
+            border-radius: 8px; color: var(--accent); font-weight: 700; font-size: 13px; text-align: center; outline: none;
         }
-        .ex-card-title input {
-            background: transparent; border: none; color: white;
-            font-size: 14px; font-weight: 600; padding: 4px 0;
-            border-bottom: 1px dashed transparent;
+        .settings-start-input:focus { border-color: var(--accent); }
+        .settings-start-unit { font-size: 11px; color: var(--text-dim); }
+        .settings-type-switch { display: flex; background: #0f0f1a; border-radius: 8px; padding: 2px; border: 1px solid var(--glass-border); }
+        .settings-type-btn {
+            padding: 6px 12px; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer;
+            color: var(--text-dim); transition: 0.2s; text-transform: uppercase; letter-spacing: 0.5px;
         }
-        .ex-card-title input:focus {
-            border-bottom-color: var(--accent);
-        }
-        .btn-del { 
-            background: rgba(248, 113, 113, 0.1); 
-            color: var(--danger); 
-            border: 1px solid rgba(248, 113, 113, 0.3); 
-            padding: 6px 10px; border-radius: 8px; cursor: pointer; 
-            font-size: 11px; font-weight: 600;
-            transition: 0.2s;
-        }
-        .btn-del:hover { background: var(--danger); color: white; }
+        .settings-type-btn.weight.active { background: linear-gradient(135deg, #c084fc, #7e22ce); color: #fff; box-shadow: 0 2px 8px rgba(192, 132, 252, 0.4); }
+        .settings-type-btn.reps.active { background: linear-gradient(135deg, #4ade80, #16a34a); color: #fff; box-shadow: 0 2px 8px rgba(74, 222, 128, 0.4); }
         
-        .ex-card-body {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 10px; align-items: center;
-        }
-        .ex-card-field label {
-            font-size: 9px; color: var(--text-dim);
-            text-transform: uppercase; letter-spacing: 0.5px;
-            margin-bottom: 4px; display: block;
-        }
-        .ex-card-field input {
-            padding: 8px 10px; font-size: 13px; font-weight: 600;
-            background: #1a1a2a;
-        }
-        .type-toggle { 
-            display: flex; gap: 0; border-radius: 8px; overflow: hidden;
-            border: 1px solid var(--glass-border);
-            background: #1a1a2a;
-        }
-        .type-btn {
-            flex: 1; padding: 8px 6px; 
-            color: var(--text-dim); cursor: pointer; 
-            font-size: 11px; font-weight: 600;
-            text-align: center; transition: 0.2s;
-            background: transparent; border: none;
-        }
-        .type-btn.active { 
-            background: var(--accent); 
-            color: white;
-        }
-
-        /* Форма добавления упражнения */
         .add-ex-card {
-            background: linear-gradient(135deg, rgba(192, 132, 252, 0.08), rgba(126, 34, 206, 0.04));
-            border: 1px dashed rgba(192, 132, 252, 0.4);
-            padding: 16px;
-            border-radius: 16px;
-            margin-top: 16px;
+            background: linear-gradient(135deg, rgba(192, 132, 252, 0.08), rgba(251, 191, 36, 0.04));
+            border: 1px dashed rgba(192, 132, 252, 0.4); border-radius: 16px; padding: 16px;
         }
-        .add-ex-title {
-            font-size: 13px; font-weight: 700; color: var(--accent);
-            margin-bottom: 12px; display: flex; align-items: center; gap: 6px;
+        .add-ex-title { font-size: 13px; color: var(--accent); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+        .add-ex-fields { display: grid; grid-template-columns: 1fr; gap: 10px; margin-bottom: 12px; }
+        .add-ex-row { display: grid; grid-template-columns: 1fr auto auto; gap: 8px; align-items: center; }
+        .add-ex-input { padding: 10px 12px; background: #1c1c2b; border: 1px solid var(--glass-border); border-radius: 10px; font-size: 13px; color: #fff; outline: none; }
+        .add-ex-input:focus { border-color: var(--accent); }
+        .add-ex-input.start { width: 80px; text-align: center; font-weight: 600; }
+        .add-ex-btn {
+            width: 100%; padding: 12px; background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+            color: #fff !important; border: none; border-radius: 10px; font-size: 13px; font-weight: 700;
+            cursor: pointer; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 4px 12px var(--accent-glow); transition: 0.2s;
         }
-        .add-ex-fields {
-            display: flex; flex-direction: column; gap: 10px;
-        }
-        .add-ex-row {
-            display: grid; grid-template-columns: 1fr 90px; gap: 10px;
-        }
-        .btn-add-main {
-            width: 100%; padding: 12px;
-            background: linear-gradient(135deg, var(--accent), var(--accent-dark));
-            color: white; border: none; border-radius: 10px;
-            font-size: 13px; font-weight: 700; cursor: pointer;
-            text-transform: uppercase; letter-spacing: 1px;
-            margin-top: 4px;
-            transition: 0.2s;
-        }
-        .btn-add-main:hover { transform: translateY(-1px); box-shadow: 0 4px 12px var(--accent-glow); }
+        .add-ex-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 16px var(--accent-glow); }
 
         /* Modal */
         #reset-modal { 
@@ -335,21 +279,25 @@
                 <option value="LEGS">Ноги и ягодицы</option>
             </select>
         </div>
-        <div id="workout-progress" class="workout-progress">
-            <div class="progress-header">
-                <span class="progress-title">Выполнение тренировки</span>
-                <span class="progress-percent" id="progress-percent">0%</span>
+        
+        <div id="status-container"></div>
+
+        <div class="progress-indicator" id="progress-indicator">
+            <div class="progress-indicator-header">
+                <span class="progress-indicator-label">Выполнено подходов</span>
+                <span class="progress-indicator-value" id="progress-percent">0%</span>
             </div>
-            <div class="progress-bar-wrap">
-                <div class="progress-bar-fill" id="progress-bar-fill"></div>
+            <div class="progress-indicator-track">
+                <div class="progress-indicator-fill" id="progress-fill"></div>
             </div>
-            <div class="progress-details">
-                <span id="progress-sets">Подходы: 0 / 0</span>
-                <span id="progress-reps">Повторы: 0</span>
+            <div class="progress-indicator-sub">
+                <span><strong id="progress-filled">0</strong> из <strong id="progress-total">0</strong> подходов</span>
+                <span id="progress-hint" style="color:var(--text-dim);">Заполните данные</span>
             </div>
         </div>
+        
         <div id="exercise-list-container"></div>
-        <button class="btn-main" onclick="saveWorkout()">Зафиксировать прогресс</button>
+        <button class="btn-main finish-btn" id="finish-btn" onclick="finishWorkout()">✅ Завершить тренировку</button>
     </div>
 
     <div id="tab-stats" class="card">
@@ -360,10 +308,16 @@
             <div class="summary-box"><span class="summary-val" id="stat-pull">-</span><span class="summary-lab">Спина и бицепс</span></div>
             <div class="summary-box"><span class="summary-val" id="stat-push">-</span><span class="summary-lab">Грудь и трицепс</span></div>
             <div class="summary-box" style="grid-column: span 2;"><span class="summary-val" id="stat-legs">-</span><span class="summary-lab">Ноги и ягодицы</span></div>
-            <div class="summary-box" style="grid-column: span 2;"><span class="summary-val" id="stat-perf">-</span><span class="summary-lab">Общая полнота плана %</span></div>
+            <div class="summary-box" style="grid-column: span 2;"><span class="summary-val" id="stat-perf">-</span><span class="summary-lab">Полнота плана %</span></div>
         </div>
-        <div class="form-group">
-            <label>Анализ группы</label>
+
+        <div class="pr-section">
+            <h3 style="margin-top:0;">🏆 Личные рекорды</h3>
+            <div id="pr-list"></div>
+        </div>
+
+        <div class="form-group" style="margin-top:20px;">
+            <label>Анализ группы (вес)</label>
             <select id="chart-group-select" onchange="updateGroupChart()">
                 <option value="PULL">Спина и бицепс</option>
                 <option value="PUSH">Грудь и трицепс</option>
@@ -375,10 +329,6 @@
         </div>
         <div class="chart-section">
             <canvas id="repsOnlyChart"></canvas>
-        </div>
-        <div class="pr-section">
-            <h3 style="margin-top:0;">🏆 Личные рекорды</h3>
-            <div id="pr-list"></div>
         </div>
     </div>
 
@@ -444,501 +394,4 @@
     const DEFAULT_PLAN = {
         PULL: [
             {id:'pull1',name:'Подтягивания (нег.)',start:0,type:'reps'},
-            {id:'pull2',name:'Тяга верх. блока',start:45,type:'weight'},
-            {id:'pull3',name:'Гориз. тяга',start:20,type:'weight'},
-            {id:'pull4',name:'Махи в наклоне',start:5,type:'weight'},
-            {id:'pull5',name:'Бицепс в блоке',start:10,type:'weight'}
-        ],
-        PUSH: [
-            {id:'push1',name:'Жим на грудь',start:25,type:'weight'},
-            {id:'push2',name:'Жим на плечи',start:10,type:'weight'},
-            {id:'push3',name:'Бабочка',start:20,type:'weight'},
-            {id:'push4',name:'Разведения в ст.',start:5,type:'weight'},
-            {id:'push5',name:'Брусья (трен.)',start:42,type:'reps'},
-            {id:'push6',name:'Гантели за гол.',start:5,type:'weight'}
-        ],
-        LEGS: [
-            {id:'legs1',name:'Жим ногами',start:65,type:'weight'},
-            {id:'legs2',name:'Ягодичный мост',start:30,type:'weight'},
-            {id:'legs3',name:'Выпады в Смите',start:20,type:'weight'},
-            {id:'legs4',name:'Разгибание ног',start:12,type:'weight'},
-            {id:'legs5',name:'Сгибание ног',start:15,type:'weight'},
-            {id:'legs6',name:'Отведение ноги',start:10,type:'weight'}
-        ]
-    };
-
-    let userPlan = JSON.parse(localStorage.getItem('userPlan')) || DEFAULT_PLAN;
-    let myChart = null, repsChart = null, wChart = null, dChart = null;
-
-    function initApp() {
-        document.getElementById('workout-date').valueAsDate = new Date();
-        showTab('add');
-    }
-
-    function showTab(tab) {
-        document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
-        document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
-        const activeTab = document.getElementById('tab-' + tab);
-        const activeNav = document.getElementById('nav-' + tab);
-        if (activeTab) activeTab.classList.add('active');
-        if (activeNav) activeNav.classList.add('active');
-        if(tab === 'stats') { updateSummary(); updateGroupChart(); updateRepsOnlyChart(); renderPRList(); }
-        if(tab === 'metrics') { checkMeasurementReminder(); renderMetricsChart(); }
-    }
-
-    function getWorkingWeight(exId) {
-        const history = JSON.parse(localStorage.getItem('fitnessHistory') || '[]');
-        let max = 0;
-        history.forEach(sess => {
-            if(sess.exercises[exId]) {
-                const localMax = Math.max(...sess.exercises[exId].map(s => s.w || 0));
-                if(localMax > max) max = localMax;
-            }
-        });
-        return max;
-    }
-
-    function shouldIncreaseForDate(exId, selectedDate) {
-        if (!selectedDate) return false;
-        const history = JSON.parse(localStorage.getItem('fitnessHistory') || '[]');
-        const sel = new Date(selectedDate);
-        for (const sess of history) {
-            if (sess.exercises[exId] && sess.exercises[exId].canIncrease) {
-                if (sel > new Date(sess.date)) return true;
-            }
-        }
-        return false;
-    }
-
-    function getMaxReps(exId) {
-        const history = JSON.parse(localStorage.getItem('fitnessHistory') || '[]');
-        let max = 0;
-        history.forEach(sess => {
-            if(sess.exercises[exId]) {
-                const localMax = Math.max(...sess.exercises[exId].map(s => s.r || 0));
-                if(localMax > max) max = localMax;
-            }
-        });
-        return max;
-    }
-
-    function renderExerciseList() {
-        const type = document.getElementById('workout-type').value;
-        const date = document.getElementById('workout-date').value;
-        const container = document.getElementById('exercise-list-container');
-        const progressEl = document.getElementById('workout-progress');
-        
-        if (!type) { 
-            container.innerHTML = ''; 
-            progressEl.classList.remove('visible');
-            return; 
-        }
-        progressEl.classList.add('visible');
-
-        const history = JSON.parse(localStorage.getItem('fitnessHistory') || '[]');
-        const existing = history.find(h => h.date === date && h.type === type);
-        const draft = JSON.parse(localStorage.getItem('currentDraft') || '{}');
-        
-        let html = '';
-        userPlan[type].forEach(ex => {
-            const exType = ex.type || 'weight';
-            const workingValue = exType === 'weight' ? getWorkingWeight(ex.id) : getMaxReps(ex.id);
-            const needsIncrease = shouldIncreaseForDate(ex.id, date);
-            const label = workingValue > 0 ? 
-                (exType === 'weight' ? `Рабочий вес: ${workingValue} кг` : `Макс. повторов: ${workingValue}`) : 
-                (exType === 'weight' ? `Старт: ${ex.start} кг` : `Старт: ${ex.start} повторов`);
-            
-            const setsData = (draft && draft[ex.id]) ? draft[ex.id] : (existing && existing.exercises[ex.id] ? existing.exercises[ex.id] : []);
-
-            html += `
-            <div class="ex-row ${exType === 'reps' ? 'no-weight' : ''}">
-                <div class="ex-header">
-                    <span class="ex-name">${ex.name}</span>
-                    <span class="ex-start ${needsIncrease ? 'increase' : ''}">${needsIncrease ? '🚀 Пора прибавить! ' : ''}${label}</span>
-                </div>
-                <div class="sets-grid">
-                    ${[0,1,2].map(i => `
-                        <div class="set-box">
-                            <span class="set-label">Подход ${i+1}</span>
-                            <div class="input-pair">
-                                ${exType === 'weight' ? `<input type="number" class="set-input weight-input" data-ex="${ex.id}" data-set="${i}" data-type="w"
-                                    value="${setsData[i] ? setsData[i].w : ''}" placeholder="кг" oninput="autoSave(); updateWorkoutProgress();">` : ''}
-                                <input type="number" class="set-input reps-input" data-ex="${ex.id}" data-set="${i}" data-type="r"
-                                    value="${setsData[i] ? setsData[i].r : ''}" placeholder="пов" oninput="autoSave(); updateWorkoutProgress();">
-                            </div>
-                        </div>
-                    `).join('')}
-                </div>
-                <div class="increase-checkbox-row">
-                    <input type="checkbox" class="set-inc" data-ex="${ex.id}" ${ (draft && draft[ex.id + '_inc']) ? 'checked' : (existing && existing.exercises[ex.id]?.canIncrease ? 'checked' : '') } onchange="autoSaveInc('${ex.id}', this.checked)">
-                    <span>Можно переходить на новый вес/повторы</span>
-                </div>
-            </div>`;
-        });
-        container.innerHTML = html;
-        updateWorkoutProgress();
-    }
-
-    function updateWorkoutProgress() {
-        const type = document.getElementById('workout-type').value;
-        if (!type) return;
-        
-        const exercises = userPlan[type];
-        const totalSets = exercises.length * 3;
-        let filledSets = 0;
-        let totalReps = 0;
-        
-        document.querySelectorAll('.set-box').forEach(box => {
-            const wInput = box.querySelector('.weight-input');
-            const rInput = box.querySelector('.reps-input');
-            const hasW = wInput && wInput.value !== '';
-            const hasR = rInput && rInput.value !== '';
-            
-            // Подход считается заполненным если есть хотя бы одно значение
-            if (hasW || hasR) filledSets++;
-            if (hasR) totalReps += parseInt(rInput.value) || 0;
-        });
-        
-        const percent = totalSets > 0 ? Math.round((filledSets / totalSets) * 100) : 0;
-        
-        document.getElementById('progress-percent').textContent = percent + '%';
-        document.getElementById('progress-percent').classList.toggle('complete', percent === 100);
-        document.getElementById('progress-bar-fill').style.width = percent + '%';
-        document.getElementById('progress-sets').textContent = `Подходы: ${filledSets} / ${totalSets}`;
-        document.getElementById('progress-reps').textContent = `Повторы: ${totalReps}`;
-    }
-
-    function autoSave() {
-        const type = document.getElementById('workout-type').value;
-        const date = document.getElementById('workout-date').value;
-        if(!type || !date) return;
-
-        const draft = JSON.parse(localStorage.getItem('currentDraft') || '{}');
-        document.querySelectorAll('.weight-input').forEach(input => {
-            const exId = input.dataset.ex, setIdx = parseInt(input.dataset.set);
-            if(!draft[exId]) draft[exId] = [];
-            if(!draft[exId][setIdx]) draft[exId][setIdx] = {};
-            draft[exId][setIdx].w = input.value ? parseFloat(input.value) : null;
-        });
-        document.querySelectorAll('.reps-input').forEach(input => {
-            const exId = input.dataset.ex, setIdx = parseInt(input.dataset.set);
-            if(!draft[exId]) draft[exId] = [];
-            if(!draft[exId][setIdx]) draft[exId][setIdx] = {};
-            draft[exId][setIdx].r = input.value ? parseInt(input.value) : null;
-        });
-        localStorage.setItem('currentDraft', JSON.stringify(draft));
-    }
-
-    function autoSaveInc(exId, val) {
-        const draft = JSON.parse(localStorage.getItem('currentDraft') || '{}');
-        draft[exId + '_inc'] = val;
-        localStorage.setItem('currentDraft', JSON.stringify(draft));
-    }
-
-    function saveWorkout() {
-        const date = document.getElementById('workout-date').value;
-        const type = document.getElementById('workout-type').value;
-        if (!date || !type) return alert('Ошибка: дата и группа обязательны!');
-
-        const workout = { date, type, exercises: {} };
-        const weights = document.querySelectorAll('.weight-input'), reps = document.querySelectorAll('.reps-input');
-        let exIdx = 0;
-        userPlan[type].forEach(ex => {
-            const exType = ex.type || 'weight';
-            const sets = [];
-            for(let i=0; i<3; i++) {
-                let w = null, r = null;
-                if(exType === 'weight') {
-                    w = weights[exIdx * 3 + i]?.value ? parseFloat(weights[exIdx * 3 + i].value) : null;
-                }
-                r = reps[exIdx * 3 + i]?.value ? parseInt(reps[exIdx * 3 + i].value) : null;
-                if(w !== null || r !== null) sets.push({ w: w, r: r });
-            }
-            workout.exercises[ex.id] = sets;
-            workout.exercises[ex.id].canIncrease = document.querySelector(`.increase-checkbox-row input[data-ex="${ex.id}"]`)?.checked || false;
-            exIdx++;
-        });
-
-        let history = JSON.parse(localStorage.getItem('fitnessHistory') || '[]');
-        history = history.filter(h => !(h.date === date && h.type === type));
-        history.push(workout);
-        localStorage.setItem('fitnessHistory', JSON.stringify(history));
-        localStorage.removeItem('currentDraft');
-        alert('Прогресс зафиксирован! 💪');
-        location.reload();
-    }
-
-    function updateSummary() {
-        const history = JSON.parse(localStorage.getItem('fitnessHistory') || '[]');
-        document.getElementById('stat-total').textContent = history.length;
-        document.getElementById('stat-last').textContent = history.length ? history[history.length-1].date : '-';
-        document.getElementById('stat-pull').textContent = history.filter(h => h.type === 'PULL').length;
-        document.getElementById('stat-push').textContent = history.filter(h => h.type === 'PUSH').length;
-        document.getElementById('stat-legs').textContent = history.filter(h => h.type === 'LEGS').length;
-        
-        let totalPotentialSets = 0, filledSets = 0;
-        history.forEach(h => {
-            Object.values(h.exercises).forEach(ex => {
-                totalPotentialSets += 3;
-                filledSets += ex.filter(s => (s.w !== null && s.w !== undefined) || (s.r !== null && s.r !== undefined)).length;
-            });
-        });
-        document.getElementById('stat-perf').textContent = totalPotentialSets ? Math.round((filledSets/totalPotentialSets)*100) + '%' : '0%';
-    }
-
-    function updateGroupChart() {
-        const type = document.getElementById('chart-group-select').value;
-        const history = JSON.parse(localStorage.getItem('fitnessHistory') || '[]');
-        const exercises = userPlan[type].filter(ex => ex.type !== 'reps');
-        const labels = [...new Set(history.map(h => h.date))].sort();
-        const datasets = [];
-
-        exercises.forEach((ex, idx) => {
-            const data = labels.map(date => {
-                const session = history.find(h => h.date === date);
-                return (session && session.exercises[ex.id]) ? Math.max(...session.exercises[ex.id].map(s => s.w || null)) : null;
-            });
-            datasets.push({ 
-                label: ex.name, data, 
-                borderColor: `hsl(${idx * 70}, 70%, 60%)`, 
-                tension: 0.4, spanGaps: true, pointRadius: 4 
-            });
-        });
-
-        if (myChart) myChart.destroy();
-        myChart = new Chart(document.getElementById('groupChart').getContext('2d'), {
-            type: 'line', data: { labels, datasets },
-            options: { 
-                responsive: true, maintainAspectRatio: false,
-                plugins: { legend: { position: 'bottom', labels: { color: '#ccc', font: { size: 10 } } } },
-                scales: { 
-                    y: { ticks: { color: '#888' }, grid: { color: '#222' } }, 
-                    x: { ticks: { color: '#888' }, grid: { color: '#222' } } 
-                } 
-            }
-        });
-    }
-
-    function updateRepsOnlyChart() {
-        const type = document.getElementById('chart-group-select').value;
-        const history = JSON.parse(localStorage.getItem('fitnessHistory') || '[]');
-        const exercises = userPlan[type].filter(ex => ex.type === 'reps');
-        const labels = [...new Set(history.map(h => h.date))].sort();
-        const datasets = [];
-
-        exercises.forEach((ex, idx) => {
-            const data = labels.map(date => {
-                const session = history.find(h => h.date === date);
-                return (session && session.exercises[ex.id]) ? Math.max(...session.exercises[ex.id].map(s => s.r || null)) : null;
-            });
-            datasets.push({ 
-                label: ex.name, data, 
-                borderColor: `hsl(${180 + idx * 40}, 70%, 60%)`, 
-                tension: 0.4, spanGaps: true, pointRadius: 4 
-            });
-        });
-
-        if (repsChart) repsChart.destroy();
-        repsChart = new Chart(document.getElementById('repsOnlyChart').getContext('2d'), {
-            type: 'line', data: { labels, datasets },
-            options: { 
-                responsive: true, maintainAspectRatio: false,
-                plugins: { legend: { position: 'bottom', labels: { color: '#ccc', font: { size: 10 } } } },
-                scales: { 
-                    y: { ticks: { color: '#888' }, grid: { color: '#222' } }, 
-                    x: { ticks: { color: '#888' }, grid: { color: '#222' } } 
-                } 
-            }
-        });
-    }
-
-    function renderPRList() {
-        const history = JSON.parse(localStorage.getItem('fitnessHistory') || '[]');
-        const prs = {};
-        
-        const allExercises = {};
-        Object.values(userPlan).flat().forEach(ex => { allExercises[ex.id] = ex.name; });
-        
-        history.forEach(h => {
-            Object.entries(h.exercises).forEach(([exId, sets]) => {
-                sets.forEach(s => {
-                    if (s && s.w && (!prs[exId] || s.w > prs[exId].weight)) {
-                        prs[exId] = { weight: s.w, date: h.date };
-                    }
-                });
-            });
-        });
-        
-        const sorted = Object.entries(prs).sort((a,b) => b[1].weight - a[1].weight).slice(0, 6);
-        const list = document.getElementById('pr-list');
-        
-        if (sorted.length === 0) {
-            list.innerHTML = '<div style="text-align:center; color:var(--text-dim); font-size:12px; padding:15px;">Пока нет рекордов. Начни тренировки!</div>';
-            return;
-        }
-        
-        list.innerHTML = sorted.map(([exId, pr], i) => `
-            <div class="pr-item">
-                <span class="pr-name">${i+1}. ${allExercises[exId] || exId}</span>
-                <span class="pr-val">${pr.weight} кг</span>
-            </div>
-        `).join('');
-    }
-
-    function saveMetrics() {
-        const m = { 
-            date: new Date().toLocaleDateString(), 
-            w: parseFloat(document.getElementById('m-weight').value), 
-            c: parseFloat(document.getElementById('m-chest').value), 
-            wa: parseFloat(document.getElementById('m-waist').value), 
-            h: parseFloat(document.getElementById('m-hips').value) 
-        };
-        const history = JSON.parse(localStorage.getItem('metricsHistory') || '[]');
-        history.push(m);
-        localStorage.setItem('metricsHistory', JSON.stringify(history));
-        renderMetricsChart();
-        alert('Замеры сохранены!');
-    }
-
-    function checkMeasurementReminder() {
-        const history = JSON.parse(localStorage.getItem('metricsHistory') || '[]');
-        if(history.length === 0) return;
-        const lastDate = new Date(history[history.length-1].date);
-        const now = new Date();
-        const diffDays = Math.floor((now - lastDate) / (1000 * 60 * 60 * 24));
-        document.getElementById('metrics-reminder').style.display = diffDays >= 30 ? 'block' : 'none';
-    }
-
-    function renderMetricsChart() {
-        const history = JSON.parse(localStorage.getItem('metricsHistory') || '[]');
-        const labels = history.map(h => h.date);
-        
-        const weightData = history.map(h => h.w);
-        const dimData = [
-            { label: 'Бедра', data: history.map(h => h.h), color: '#03dac6' },
-            { label: 'Грудь', data: history.map(h => h.c), color: '#f87171' },
-            { label: 'Талия', data: history.map(h => h.wa), color: '#fbbf24' }
-        ];
-
-        if (wChart) wChart.destroy();
-        wChart = new Chart(document.getElementById('weightChart').getContext('2d'), {
-            type: 'line', data: { labels, datasets: [{ label: 'Вес (кг)', data: weightData, borderColor: '#bb86fc', tension: 0.4 }] },
-            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: '#ccc', font: { size: 10 } } } }, scales: { y: { ticks: { color: '#888' }, grid: { color: '#222' } }, x: { ticks: { color: '#888' }, grid: { color: '#222' } } } }
-        });
-
-        if (dChart) dChart.destroy();
-        dChart = new Chart(document.getElementById('dimsChart').getContext('2d'), {
-            type: 'line', data: { labels, datasets: dimData.map(d => ({ label: d.label, data: d.data, borderColor: d.color, tension: 0.4 })) },
-            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: '#ccc', font: { size: 10 } } } }, scales: { y: { ticks: { color: '#888' }, grid: { color: '#222' } }, x: { ticks: { color: '#888' }, grid: { color: '#222' } } } }
-        });
-    }
-
-    function renderSettingsGroup() {
-        const group = document.getElementById('settings-group-select').value;
-        const container = document.getElementById('settings-container');
-        if (!group) { container.innerHTML = ''; return; }
-        const groupName = { PULL: 'Спина и бицепс', PUSH: 'Грудь и трицепс', LEGS: 'Ноги и ягодицы' }[group];
-        
-        let html = `<div class="settings-group"><h3>${groupName}</h3>`;
-        
-        userPlan[group].forEach((ex, idx) => {
-            const exType = ex.type || 'weight';
-            html += `
-            <div class="settings-ex-card">
-                <div class="ex-card-header">
-                    <div class="ex-card-title">
-                        <span class="ex-card-number">${idx + 1}</span>
-                        <input type="text" value="${ex.name}" onchange="updateExName('${group}', ${idx}, this.value)" placeholder="Название">
-                    </div>
-                    <button class="btn-del" onclick="deleteExercise('${group}', ${idx})">Удалить</button>
-                </div>
-                <div class="ex-card-body">
-                    <div class="ex-card-field">
-                        <label>Старт (кг / пов)</label>
-                        <input type="number" value="${ex.start}" onchange="updateStartWeight('${group}', ${idx}, this.value)">
-                    </div>
-                    <div class="ex-card-field">
-                        <label>Тип упражнения</label>
-                        <div class="type-toggle">
-                            <button type="button" class="type-btn ${exType === 'weight' ? 'active' : ''}" onclick="toggleExType('${group}', ${idx}, 'weight')">Вес</button>
-                            <button type="button" class="type-btn ${exType === 'reps' ? 'active' : ''}" onclick="toggleExType('${group}', ${idx}, 'reps')">Повторы</button>
-                        </div>
-                    </div>
-                </div>
-            </div>`;
-        });
-        
-        html += `
-        <div class="add-ex-card">
-            <div class="add-ex-title">➕ Новое упражнение</div>
-            <div class="add-ex-fields">
-                <div class="ex-card-field">
-                    <label>Название</label>
-                    <input type="text" id="new-name-${group}" placeholder="Например: Жим Арнольда">
-                </div>
-                <div class="add-ex-row">
-                    <div class="ex-card-field">
-                        <label>Старт (кг / пов)</label>
-                        <input type="number" id="new-start-${group}" placeholder="0">
-                    </div>
-                    <div class="ex-card-field">
-                        <label>Тип</label>
-                        <div class="type-toggle">
-                            <button type="button" class="type-btn active" id="new-type-weight-${group}" onclick="setNewType('${group}', 'weight')">Вес</button>
-                            <button type="button" class="type-btn" id="new-type-reps-${group}" onclick="setNewType('${group}', 'reps')">Повторы</button>
-                        </div>
-                    </div>
-                </div>
-                <button type="button" class="btn-add-main" onclick="addExercise('${group}')">+ Добавить</button>
-            </div>
-        </div>`;
-        
-        html += `</div>`;
-        container.innerHTML = html;
-    }
-
-    function updateExName(group, idx, val) { userPlan[group][idx].name = val; localStorage.setItem('userPlan', JSON.stringify(userPlan)); }
-    function updateStartWeight(group, idx, val) { userPlan[group][idx].start = parseFloat(val); localStorage.setItem('userPlan', JSON.stringify(userPlan)); }
-    function toggleExType(group, idx, type) {
-        userPlan[group][idx].type = type;
-        localStorage.setItem('userPlan', JSON.stringify(userPlan));
-        renderSettingsGroup();
-    }
-    function setNewType(group, type) {
-        document.querySelectorAll(`#new-type-weight-${group}, #new-type-reps-${group}`).forEach(el => el.classList.remove('active'));
-        document.getElementById(`new-type-${type}-${group}`).classList.add('active');
-    }
-    function addExercise(group) {
-        const name = document.getElementById(`new-name-${group}`).value;
-        const start = parseFloat(document.getElementById(`new-start-${group}`).value);
-        const type = document.querySelector(`#new-type-weight-${group}.active`) ? 'weight' : 'reps';
-        if(!name) return alert('Введите название!');
-        userPlan[group].push({ id: 'custom_' + Date.now(), name: name, start: start || 0, type: type });
-        localStorage.setItem('userPlan', JSON.stringify(userPlan));
-        renderSettingsGroup();
-    }
-    function deleteExercise(group, idx) {
-        if(confirm('Удалить упражнение?')) { 
-            userPlan[group].splice(idx, 1); 
-            localStorage.setItem('userPlan', JSON.stringify(userPlan)); 
-            renderSettingsGroup(); 
-        }
-    }
-
-    function confirmReset() { document.getElementById('reset-modal').style.display = 'flex'; }
-    function closeResetModal() { document.getElementById('reset-modal').style.display = 'none'; }
-    function hardReset() {
-        localStorage.clear();
-        userPlan = JSON.parse(JSON.stringify(DEFAULT_PLAN));
-        localStorage.setItem('userPlan', JSON.stringify(userPlan));
-        alert('Система сброшена!');
-        location.reload();
-    }
-
-    window.onload = () => {
-        document.getElementById('workout-date').valueAsDate = new Date();
-        showTab('add');
-    };
-</script>
-</body>
-</html>
+            {id:'pull2',name:'Тяга верх. блока',start:4
