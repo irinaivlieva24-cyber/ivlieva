@@ -17,6 +17,7 @@
             --success: #4ade80;
             --danger: #f87171;
             --gold: #fbbf24;
+            --gold-glow: rgba(251, 191, 36, 0.5);
             --glass: rgba(255, 255, 255, 0.03);
             --glass-border: rgba(255, 255, 255, 0.08);
         }
@@ -48,7 +49,7 @@
             border: none; background: none; color: var(--text-dim); 
             font-size: 10px; font-weight: 500; cursor: pointer;
             display: flex; flex-direction: column; align-items: center; gap: 4px;
-            transition: 0.3s; width: 20%;
+            transition: 0.3s; width: 25%;
         }
         nav button.active { color: var(--accent); }
         nav button .icon { font-size: 20px; filter: grayscale(1); }
@@ -70,6 +71,7 @@
             margin-bottom: 30px;
         }
         h2 { text-align: center; font-size: 18px; color: var(--text); margin-bottom: 20px; }
+        h3 { font-size: 15px; color: var(--accent); margin: 20px 0 12px 0; padding-left: 10px; border-left: 3px solid var(--accent); }
         
         .form-group { margin-bottom: 15px; display: flex; flex-direction: column; gap: 8px; width: 100%; }
         label { font-size: 11px; color: var(--text-dim); text-transform: uppercase; padding-left: 4px; }
@@ -81,66 +83,47 @@
         }
         .input-date { width: 90%; margin: 0 auto; display: block; }
 
-        /* Workout Layout */
+        /* Workout Layout — подходы в столбик */
         .ex-row { 
             background: var(--glass); padding: 15px; 
             border-radius: 20px; margin-bottom: 12px; border: 1px solid var(--glass-border);
         }
-        .ex-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        .ex-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px; }
         .ex-name { font-weight: 600; font-size: 15px; color: #fff; }
-        .ex-start { font-size: 11px; color: var(--accent); }
-        .ex-start.increase { color: var(--gold); font-weight: 700; text-shadow: 0 0 5px var(--gold); }
+        .ex-start { font-size: 12px; color: var(--accent); }
+        .ex-start.increase { 
+            color: var(--gold); 
+            font-weight: 700; 
+            text-shadow: 0 0 8px var(--gold-glow);
+            animation: pulseGold 1.5s ease-in-out infinite;
+        }
+        @keyframes pulseGold { 
+            0%, 100% { text-shadow: 0 0 8px var(--gold-glow); }
+            50% { text-shadow: 0 0 16px var(--gold), 0 0 24px var(--gold-glow); }
+        }
         
-        /* Изменено: подходы в одну строку */
-        .sets-grid { 
-            display: grid; 
-            grid-template-columns: repeat(3, 1fr); 
-            gap: 8px; 
-            margin-bottom: 12px;
-        }
+        .sets-grid { display: flex; flex-direction: column; gap: 8px; }
         .set-box { 
-            background: #1a1a2a; 
-            padding: 8px; 
-            border-radius: 14px; 
-            display: flex; 
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
+            background: #1a1a2a; padding: 10px 14px; border-radius: 14px; 
+            display: flex; align-items: center; justify-content: space-between;
             border: 1px solid var(--glass-border);
-            min-height: 60px;
         }
-        .set-label { 
-            font-size: 10px; 
-            color: var(--text-dim); 
-            text-transform: uppercase; 
-            margin-bottom: 4px;
-        }
-        .input-pair { 
-            display: flex; 
-            gap: 4px; 
-            align-items: center; 
-            width: 100%;
-        }
+        .set-label { font-size: 12px; color: var(--text-dim); text-transform: uppercase; font-weight: 600; min-width: 75px; }
+        .input-pair { display: flex; gap: 10px; align-items: center; }
         .set-input { 
-            width: 35px; /* Уменьшено */
-            padding: 4px; /* Уменьшено */
-            background: #25253a; 
-            border: 1px solid #333; 
-            color: white; 
-            text-align: center; 
-            font-size: 12px; 
-            font-weight: 600; 
-            border-radius: 6px; 
-            outline: none;
+            width: 60px; padding: 8px; background: #25253a; border: 1px solid #333; 
+            color: white; text-align: center; font-size: 14px; font-weight: 600; 
+            border-radius: 8px; outline: none;
         }
-        /* Скрытие полей веса для упражнений без веса */
+        .set-input:focus { border-color: var(--accent); }
         .no-weight .weight-input { display: none; }
 
         .increase-checkbox-row { 
             display: flex; align-items: center; gap: 10px; 
+            margin-top: 15px; padding-top: 10px; border-top: 1px solid var(--glass-border);
             font-size: 12px; color: var(--text-dim);
         }
-        .increase-checkbox-row input { width: 18px; height: 18px; cursor: pointer; }
+        .increase-checkbox-row input { width: 18px; height: 18px; cursor: pointer; accent-color: var(--gold); }
 
         .btn-main { 
             width: 100%; padding: 16px; background: linear-gradient(135deg, var(--accent), var(--accent-dark)); 
@@ -148,42 +131,6 @@
             cursor: pointer; font-weight: 700; margin-top: 20px; transition: 0.3s; 
             text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 8px 15px var(--accent-glow);
         }
-
-        /* Goals */
-        .goal-item { background: #1c1c2b; padding: 15px; border-radius: 18px; margin-bottom: 12px; border: 1px solid var(--glass-border); }
-        .progress-container { background: #0a0a12; height: 8px; border-radius: 4px; margin: 12px 0; overflow: hidden; }
-        .progress-bar { height: 100%; background: linear-gradient(to right, var(--accent), var(--success)); width: 0%; transition: width 0.6s ease; }
-
-        /* Settings */
-        .settings-group { margin-bottom: 25px; }
-        .settings-group h3 { font-size: 16px; color: var(--accent); margin-bottom: 12px; padding-left: 10px; border-left: 3px solid var(--accent); }
-        .settings-ex-item { 
-            display: grid; grid-template-columns: 1fr auto auto auto; align-items: center; gap: 10px;
-            background: var(--glass); padding: 10px; border-radius: 12px; margin-bottom: 8px; 
-            border: 1px solid var(--glass-border);
-        }
-        .btn-del { background: none; color: var(--danger); border: 1px solid var(--danger); padding: 4px 8px; border-radius: 6px; cursor: pointer; font-size: 11px; }
-        .type-toggle { 
-            display: flex; 
-            gap: 5px; 
-            font-size: 10px;
-        }
-        .type-btn {
-            padding: 3px 6px;
-            border-radius: 4px;
-            background: #333;
-            color: #999;
-            cursor: pointer;
-            font-size: 10px;
-        }
-        .type-btn.active {
-            background: var(--accent);
-            color: white;
-        }
-
-        .add-ex-form { display: grid; grid-template-columns: 1fr 70px auto auto; gap: 8px; margin-top: 12px; }
-        .add-ex-form input { padding: 8px; font-size: 13px; }
-        .btn-add { background: var(--accent); color: white; border: none; border-radius: 8px; width: 35px; height: 35px; cursor: pointer; font-weight: bold; }
 
         /* Metrics */
         .metrics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
@@ -200,6 +147,84 @@
         .summary-box { background: var(--glass); padding: 15px; border-radius: 15px; border: 1px solid var(--glass-border); text-align: center; }
         .summary-val { font-size: 20px; font-weight: 800; color: var(--accent); display: block; }
         .summary-lab { font-size: 11px; color: var(--text-dim); text-transform: uppercase; }
+
+        /* Muscle Map */
+        .muscle-map-section { 
+            background: #161625; padding: 20px 15px; border-radius: 20px; 
+            margin-top: 20px; border: 1px solid var(--glass-border);
+        }
+        .muscle-map-container { 
+            display: grid; grid-template-columns: 1fr 1fr; gap: 10px; 
+            margin-top: 15px;
+        }
+        .body-view { text-align: center; }
+        .body-view h4 { 
+            margin: 0 0 8px 0; font-size: 11px; color: var(--text-dim); 
+            text-transform: uppercase; letter-spacing: 1px;
+        }
+        .body-view svg { width: 100%; max-width: 180px; height: auto; }
+        .muscle { 
+            transition: fill 0.6s ease, opacity 0.6s ease, filter 0.3s ease; 
+            cursor: pointer;
+            stroke: rgba(255,255,255,0.08);
+            stroke-width: 0.5;
+        }
+        .muscle:hover { filter: brightness(1.4) drop-shadow(0 0 6px var(--accent)); }
+        .body-outline { fill: #1a1a2a; stroke: #2a2a3a; stroke-width: 0.5; }
+        
+        .muscle-legend { 
+            display: grid; grid-template-columns: 1fr 1fr; gap: 6px; 
+            margin-top: 15px; font-size: 11px;
+        }
+        .legend-item { 
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 6px 10px; background: var(--glass); border-radius: 8px;
+            border: 1px solid var(--glass-border);
+        }
+        .legend-name { color: var(--text-dim); }
+        .legend-val { color: var(--accent); font-weight: 700; }
+        
+        .intensity-scale { 
+            display: flex; align-items: center; gap: 8px; 
+            margin-top: 12px; font-size: 10px; color: var(--text-dim);
+        }
+        .intensity-bar { 
+            flex: 1; height: 8px; border-radius: 4px;
+            background: linear-gradient(to right, #2a2a3a, #c084fc, #fbbf24);
+        }
+
+        /* PR List */
+        .pr-section { 
+            background: #161625; padding: 15px; border-radius: 20px; 
+            margin-top: 20px; border: 1px solid var(--glass-border);
+        }
+        .pr-item { 
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 10px 12px; background: var(--glass); border-radius: 12px;
+            margin-bottom: 8px; border: 1px solid var(--glass-border);
+        }
+        .pr-name { font-size: 13px; color: var(--text); }
+        .pr-val { font-size: 14px; font-weight: 700; color: var(--gold); }
+
+        /* Settings */
+        .settings-group { margin-bottom: 25px; }
+        .settings-group h3 { font-size: 16px; color: var(--accent); margin-bottom: 12px; padding-left: 10px; border-left: 3px solid var(--accent); }
+        .settings-ex-item { 
+            display: grid; grid-template-columns: 1fr auto auto auto; align-items: center; gap: 10px;
+            background: var(--glass); padding: 10px; border-radius: 12px; margin-bottom: 8px; 
+            border: 1px solid var(--glass-border);
+        }
+        .btn-del { background: none; color: var(--danger); border: 1px solid var(--danger); padding: 4px 8px; border-radius: 6px; cursor: pointer; font-size: 11px; }
+        .type-toggle { display: flex; gap: 5px; font-size: 10px; }
+        .type-btn {
+            padding: 3px 6px; border-radius: 4px; background: #333;
+            color: #999; cursor: pointer; font-size: 10px;
+        }
+        .type-btn.active { background: var(--accent); color: white; }
+
+        .add-ex-form { display: grid; grid-template-columns: 1fr 70px auto auto; gap: 8px; margin-top: 12px; }
+        .add-ex-form input { padding: 8px; font-size: 13px; }
+        .btn-add { background: var(--accent); color: white; border: none; border-radius: 8px; width: 35px; height: 35px; cursor: pointer; font-weight: bold; }
 
         /* Modal */
         #reset-modal { 
@@ -222,7 +247,7 @@
         <h2 style="color: #fff;">⚡️ ТРЕНИРОВКА</h2>
         <div class="form-group">
             <label>Дата</label>
-            <input type="date" id="workout-date" class="input-date" onchange="checkExistingWorkout()">
+            <input type="date" id="workout-date" class="input-date" onchange="renderExerciseList()">
         </div>
         <div class="form-group">
             <label>Направление</label>
@@ -245,10 +270,91 @@
             <div class="summary-box"><span class="summary-val" id="stat-pull">-</span><span class="summary-lab">Спина и бицепс</span></div>
             <div class="summary-box"><span class="summary-val" id="stat-push">-</span><span class="summary-lab">Грудь и трицепс</span></div>
             <div class="summary-box" style="grid-column: span 2;"><span class="summary-val" id="stat-legs">-</span><span class="summary-lab">Ноги и ягодицы</span></div>
-            <div class="summary-box" style="grid-column: span 2;"><span class="summary-val" id="stat-perf">-</span><span class="summary-lab">Общая полнота плана %</span></div>
+            <div class="summary-box"><span class="summary-val" id="stat-tonnage">-</span><span class="summary-lab">Тоннаж всего (кг)</span></div>
+            <div class="summary-box"><span class="summary-val" id="stat-perf">-</span><span class="summary-lab">Полнота плана %</span></div>
         </div>
-        <div class="form-group">
-            <label>Анализ группы</label>
+
+        <div class="muscle-map-section">
+            <h3 style="margin-top:0;">🔥 Активация мышц</h3>
+            <div class="muscle-map-container">
+                <div class="body-view">
+                    <h4>Спереди</h4>
+                    <svg viewBox="0 0 200 500" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Голова -->
+                        <circle cx="100" cy="35" r="22" class="body-outline"/>
+                        <!-- Шея -->
+                        <rect x="90" y="55" width="20" height="12" class="body-outline"/>
+                        <!-- Дельты -->
+                        <path class="muscle" data-muscle="shoulders" d="M 68 70 Q 55 72 50 90 Q 52 105 65 108 Q 75 100 78 85 Z"/>
+                        <path class="muscle" data-muscle="shoulders" d="M 132 70 Q 145 72 150 90 Q 148 105 135 108 Q 125 100 122 85 Z"/>
+                        <!-- Грудь -->
+                        <path class="muscle" data-muscle="chest" d="M 78 78 Q 100 75 122 78 L 125 118 Q 100 125 75 118 Z"/>
+                        <!-- Бицепс -->
+                        <path class="muscle" data-muscle="biceps" d="M 50 108 Q 42 135 45 170 Q 55 175 62 170 Q 68 135 65 108 Z"/>
+                        <path class="muscle" data-muscle="biceps" d="M 150 108 Q 158 135 155 170 Q 145 175 138 170 Q 132 135 135 108 Z"/>
+                        <!-- Предплечья -->
+                        <path class="body-outline" d="M 45 172 Q 40 210 42 240 L 58 240 Q 62 210 62 172 Z"/>
+                        <path class="body-outline" d="M 155 172 Q 160 210 158 240 L 142 240 Q 138 210 138 172 Z"/>
+                        <!-- Пресс -->
+                        <path class="muscle" data-muscle="abs" d="M 78 125 L 122 125 L 118 215 Q 100 220 82 215 Z"/>
+                        <!-- Квадрицепсы -->
+                        <path class="muscle" data-muscle="quads" d="M 82 222 L 98 222 L 95 360 Q 88 365 80 360 Z"/>
+                        <path class="muscle" data-muscle="quads" d="M 102 222 L 118 222 L 120 360 Q 112 365 105 360 Z"/>
+                        <!-- Икры -->
+                        <path class="muscle" data-muscle="calves" d="M 80 368 L 95 368 L 92 460 Q 86 465 82 460 Z"/>
+                        <path class="muscle" data-muscle="calves" d="M 105 368 L 120 368 L 118 460 Q 114 465 108 460 Z"/>
+                    </svg>
+                </div>
+                <div class="body-view">
+                    <h4>Сзади</h4>
+                    <svg viewBox="0 0 200 500" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Голова -->
+                        <circle cx="100" cy="35" r="22" class="body-outline"/>
+                        <!-- Шея -->
+                        <rect x="90" y="55" width="20" height="12" class="body-outline"/>
+                        <!-- Трапеция -->
+                        <path class="muscle" data-muscle="traps" d="M 70 68 L 130 68 L 140 95 Q 100 85 60 95 Z"/>
+                        <!-- Спина (широчайшие) -->
+                        <path class="muscle" data-muscle="back" d="M 62 98 Q 100 92 138 98 L 135 175 Q 100 185 65 175 Z"/>
+                        <!-- Трицепс -->
+                        <path class="muscle" data-muscle="triceps" d="M 50 108 Q 42 135 45 170 Q 55 175 62 170 Q 68 135 65 108 Z"/>
+                        <path class="muscle" data-muscle="triceps" d="M 150 108 Q 158 135 155 170 Q 145 175 138 170 Q 132 135 135 108 Z"/>
+                        <!-- Предплечья -->
+                        <path class="body-outline" d="M 45 172 Q 40 210 42 240 L 58 240 Q 62 210 62 172 Z"/>
+                        <path class="body-outline" d="M 155 172 Q 160 210 158 240 L 142 240 Q 138 210 138 172 Z"/>
+                        <!-- Поясница -->
+                        <path class="muscle" data-muscle="lowerback" d="M 68 178 L 132 178 L 128 218 Q 100 222 72 218 Z"/>
+                        <!-- Ягодицы -->
+                        <path class="muscle" data-muscle="glutes" d="M 72 222 L 98 222 L 96 270 Q 84 275 74 268 Z"/>
+                        <path class="muscle" data-muscle="glutes" d="M 102 222 L 128 222 L 126 268 Q 116 275 104 270 Z"/>
+                        <!-- Бицепс бедра -->
+                        <path class="muscle" data-muscle="hamstrings" d="M 78 275 L 96 275 L 94 365 Q 86 370 80 365 Z"/>
+                        <path class="muscle" data-muscle="hamstrings" d="M 104 275 L 122 275 L 120 365 Q 114 370 106 365 Z"/>
+                        <!-- Икры -->
+                        <path class="muscle" data-muscle="calves" d="M 80 368 L 95 368 L 92 460 Q 86 465 82 460 Z"/>
+                        <path class="muscle" data-muscle="calves" d="M 105 368 L 120 368 L 118 460 Q 114 465 108 460 Z"/>
+                    </svg>
+                </div>
+            </div>
+            <div class="intensity-scale">
+                <span>Слабо</span>
+                <div class="intensity-bar"></div>
+                <span>Макс</span>
+            </div>
+            <div class="muscle-legend" id="muscle-legend"></div>
+        </div>
+
+        <div class="pr-section">
+            <h3 style="margin-top:0;">🏆 Личные рекорды</h3>
+            <div id="pr-list"></div>
+        </div>
+
+        <div class="chart-section">
+            <canvas id="volumeChart"></canvas>
+        </div>
+
+        <div class="form-group" style="margin-top:20px;">
+            <label>Анализ группы (вес)</label>
             <select id="chart-group-select" onchange="updateGroupChart()">
                 <option value="PULL">Спина и бицепс</option>
                 <option value="PUSH">Грудь и трицепс</option>
@@ -260,22 +366,6 @@
         </div>
         <div class="chart-section">
             <canvas id="repsOnlyChart"></canvas>
-        </div>
-    </div>
-
-    <div id="tab-goals" class="card">
-        <h2 style="color: #fff;">🎯 ЦЕЛИ</h2>
-        <div id="goals-list"></div>
-        <div class="chart-section" style="margin-top:30px">
-            <div class="form-group">
-                <label>Название цели</label>
-                <input type="text" id="goal-name" placeholder="Напр: Ягодичный мост">
-                <label>Целевой вес (кг)</label>
-                <input type="number" id="goal-value">
-                <label>Упражнение</label>
-                <select id="goal-ex-id"></select>
-                <button class="btn-main" onclick="addGoal()">Добавить цель</button>
-            </div>
         </div>
     </div>
 
@@ -314,7 +404,7 @@
 <div id="reset-modal">
     <div class="modal-content">
         <h3 style="color: var(--danger)">Сброс данных?</h3>
-        <p style="color: var(--text-dim); font-size: 14px;">Все тренировки, цели и замеры будут удалены навсегда.</p>
+        <p style="color: var(--text-dim); font-size: 14px;">Все тренировки и замеры будут удалены навсегда.</p>
         <div class="modal-btns">
             <button class="btn-cancel" onclick="closeResetModal()">Отмена</button>
             <button class="btn-confirm" onclick="hardReset()">Стереть всё</button>
@@ -324,19 +414,16 @@
 
 <nav>
     <button id="nav-add" class="active" onclick="showTab('add')">
-        <span class="icon">💪</span><span style="text-align:center">Тренировка</span>
+        <span class="icon">💪</span><span>Тренировка</span>
     </button>
     <button id="nav-stats" onclick="showTab('stats')">
-        <span class="icon">📈</span><span style="text-align:center">Аналитика</span>
-    </button>
-    <button id="nav-goals" onclick="showTab('goals')">
-        <span class="icon">🎯</span><span style="text-align:center">Цели</span>
+        <span class="icon">📈</span><span>Аналитика</span>
     </button>
     <button id="nav-metrics" onclick="showTab('metrics')">
-        <span class="icon">📏</span><span style="text-align:center">Замеры</span>
+        <span class="icon">📏</span><span>Замеры</span>
     </button>
     <button id="nav-settings" onclick="showTab('settings')">
-        <span class="icon">⚙️</span><span style="text-align:center">Настройки</span>
+        <span class="icon">⚙️</span><span>Настройки</span>
     </button>
 </nav>
 
@@ -367,8 +454,36 @@
         ]
     };
 
+    // Распределение упражнений по мышцам (коэффициенты)
+    const MUSCLE_DISTRIBUTION = {
+        push1: {chest: 0.7, triceps: 0.3},
+        push2: {shoulders: 0.7, triceps: 0.3},
+        push3: {chest: 0.8, triceps: 0.2},
+        push4: {shoulders: 0.9, triceps: 0.1},
+        push5: {chest: 0.5, triceps: 0.5},
+        push6: {shoulders: 0.8, triceps: 0.2},
+        pull1: {back: 0.6, biceps: 0.4},
+        pull2: {back: 0.6, biceps: 0.4},
+        pull3: {back: 0.5, traps: 0.5},
+        pull4: {back: 0.4, traps: 0.6},
+        pull5: {biceps: 1.0},
+        legs1: {quads: 0.6, glutes: 0.4},
+        legs2: {glutes: 0.8, hamstrings: 0.2},
+        legs3: {quads: 0.5, glutes: 0.5},
+        legs4: {quads: 1.0},
+        legs5: {hamstrings: 1.0},
+        legs6: {glutes: 0.7, hamstrings: 0.3}
+    };
+
+    const MUSCLE_NAMES = {
+        chest: 'Грудь', shoulders: 'Плечи', triceps: 'Трицепс',
+        back: 'Спина', biceps: 'Бицепс', traps: 'Трапеция',
+        quads: 'Квадрицепс', hamstrings: 'Бицепс бедра', glutes: 'Ягодицы',
+        calves: 'Икры', abs: 'Пресс', lowerback: 'Поясница'
+    };
+
     let userPlan = JSON.parse(localStorage.getItem('userPlan')) || DEFAULT_PLAN;
-    let myChart = null, repsChart = null, wChart = null, dChart = null;
+    let myChart = null, repsChart = null, volumeChart = null, wChart = null, dChart = null;
 
     function initApp() {
         document.getElementById('workout-date').valueAsDate = new Date();
@@ -382,8 +497,7 @@
         const activeNav = document.getElementById('nav-' + tab);
         if (activeTab) activeTab.classList.add('active');
         if (activeNav) activeNav.classList.add('active');
-        if(tab === 'stats') { updateSummary(); updateGroupChart(); updateRepsOnlyChart(); }
-        if(tab === 'goals') renderGoals();
+        if(tab === 'stats') { updateSummary(); updateGroupChart(); updateRepsOnlyChart(); updateVolumeChart(); renderMuscleMap(); renderPRList(); }
         if(tab === 'metrics') { checkMeasurementReminder(); renderMetricsChart(); }
     }
 
@@ -399,10 +513,18 @@
         return max;
     }
 
-    function shouldIncrease(exId) {
+    // Проверка: нужно ли увеличивать вес для ВЫБРАННОЙ даты
+    // Возвращает true, если есть более ранняя тренировка с галочкой canIncrease
+    function shouldIncreaseForDate(exId, selectedDate) {
+        if (!selectedDate) return false;
         const history = JSON.parse(localStorage.getItem('fitnessHistory') || '[]');
-        const lastSession = history.filter(h => h.exercises[exId]).sort((a,b) => new Date(b.date) - new Date(a.date))[0];
-        return lastSession ? lastSession.exercises[exId].canIncrease : false;
+        const sel = new Date(selectedDate);
+        for (const sess of history) {
+            if (sess.exercises[exId] && sess.exercises[exId].canIncrease) {
+                if (sel > new Date(sess.date)) return true;
+            }
+        }
+        return false;
     }
 
     function getMaxReps(exId) {
@@ -431,10 +553,10 @@
         userPlan[type].forEach(ex => {
             const exType = ex.type || 'weight';
             const workingValue = exType === 'weight' ? getWorkingWeight(ex.id) : getMaxReps(ex.id);
-            const needsIncrease = shouldIncrease(ex.id);
+            const needsIncrease = shouldIncreaseForDate(ex.id, date);
             const label = workingValue > 0 ? 
-                (exType === 'weight' ? `Рабочий вес: ${workingValue}кг (макс)` : `Макс. повторов: ${workingValue}`) : 
-                (exType === 'weight' ? `Старт: ${ex.start}кг` : `Старт: ${ex.start} повторов`);
+                (exType === 'weight' ? `Рабочий вес: ${workingValue} кг` : `Макс. повторов: ${workingValue}`) : 
+                (exType === 'weight' ? `Старт: ${ex.start} кг` : `Старт: ${ex.start} повторов`);
             
             const setsData = (draft && draft[ex.id]) ? draft[ex.id] : (existing && existing.exercises[ex.id] ? existing.exercises[ex.id] : []);
 
@@ -491,27 +613,6 @@
         const draft = JSON.parse(localStorage.getItem('currentDraft') || '{}');
         draft[exId + '_inc'] = val;
         localStorage.setItem('currentDraft', JSON.stringify(draft));
-        // Обновляем отображение немедленно
-        const startEl = document.querySelector(`.ex-row[data-ex-id="${exId}"] .ex-start`);
-        if(startEl) {
-            startEl.classList.toggle('increase', val);
-            if(val) {
-                startEl.innerHTML = startEl.innerHTML.replace('🚀 Пора прибавить! ', '');
-                startEl.innerHTML = '🚀 Пора прибавить! ' + startEl.innerHTML;
-            } else {
-                startEl.innerHTML = startEl.innerHTML.replace('🚀 Пора прибавить! ', '');
-            }
-        }
-    }
-
-    function checkExistingWorkout() {
-        const date = document.getElementById('workout-date').value;
-        const type = document.getElementById('workout-type').value;
-        if(!type) return;
-        const history = JSON.parse(localStorage.getItem('fitnessHistory') || '[]');
-        const exists = history.find(h => h.date === date && h.type === type);
-        if(exists) alert('На эту дату уже есть тренировка. Вы можете отредактировать её.');
-        renderExerciseList();
     }
 
     function saveWorkout() {
@@ -555,21 +656,26 @@
         document.getElementById('stat-push').textContent = history.filter(h => h.type === 'PUSH').length;
         document.getElementById('stat-legs').textContent = history.filter(h => h.type === 'LEGS').length;
         
-        // Calculation of total fulfillment %
-        let totalPotentialSets = 0, filledSets = 0;
+        let totalTonnage = 0, totalPotentialSets = 0, filledSets = 0;
         history.forEach(h => {
             Object.values(h.exercises).forEach(ex => {
                 totalPotentialSets += 3;
-                filledSets += ex.filter(s => (s.w !== null && s.w !== undefined) || (s.r !== null && s.r !== undefined)).length;
+                ex.forEach(s => {
+                    if (s) {
+                        if ((s.w !== null && s.w !== undefined) || (s.r !== null && s.r !== undefined)) filledSets++;
+                        if (s.w && s.r) totalTonnage += s.w * s.r;
+                    }
+                });
             });
         });
+        document.getElementById('stat-tonnage').textContent = totalTonnage > 1000 ? (totalTonnage/1000).toFixed(1) + 'т' : Math.round(totalTonnage);
         document.getElementById('stat-perf').textContent = totalPotentialSets ? Math.round((filledSets/totalPotentialSets)*100) + '%' : '0%';
     }
 
     function updateGroupChart() {
         const type = document.getElementById('chart-group-select').value;
         const history = JSON.parse(localStorage.getItem('fitnessHistory') || '[]');
-        const exercises = userPlan[type].filter(ex => ex.type !== 'reps'); // Только упражнения с весом
+        const exercises = userPlan[type].filter(ex => ex.type !== 'reps');
         const labels = [...new Set(history.map(h => h.date))].sort();
         const datasets = [];
 
@@ -577,32 +683,20 @@
             const data = labels.map(date => {
                 const session = history.find(h => h.date === date);
                 return (session && session.exercises[ex.id]) ? Math.max(...session.exercises[ex.id].map(s => s.w || null)) : null;
-            }).filter(v => v !== null);
-            if(data.length > 0) {
-                datasets.push({ 
-                    label: ex.name, 
-                    data, 
-                    borderColor: `hsl(${idx * 70}, 70%, 60%)`, 
-                    tension: 0.4, 
-                    spanGaps: true, 
-                    pointRadius: 4 
-                });
-            }
+            });
+            datasets.push({ 
+                label: ex.name, data, 
+                borderColor: `hsl(${idx * 70}, 70%, 60%)`, 
+                tension: 0.4, spanGaps: true, pointRadius: 4 
+            });
         });
 
         if (myChart) myChart.destroy();
         myChart = new Chart(document.getElementById('groupChart').getContext('2d'), {
-            type: 'line', 
-            data: { labels, datasets },
+            type: 'line', data: { labels, datasets },
             options: { 
-                responsive: true, 
-                maintainAspectRatio: false, 
-                plugins: { 
-                    legend: { 
-                        position: 'bottom', 
-                        labels: { color: '#ccc', font: { size: 10 } } 
-                    } 
-                },
+                responsive: true, maintainAspectRatio: false,
+                plugins: { legend: { position: 'bottom', labels: { color: '#ccc', font: { size: 10 } } } },
                 scales: { 
                     y: { ticks: { color: '#888' }, grid: { color: '#222' } }, 
                     x: { ticks: { color: '#888' }, grid: { color: '#222' } } 
@@ -614,7 +708,7 @@
     function updateRepsOnlyChart() {
         const type = document.getElementById('chart-group-select').value;
         const history = JSON.parse(localStorage.getItem('fitnessHistory') || '[]');
-        const exercises = userPlan[type].filter(ex => ex.type === 'reps'); // Только упражнения без веса
+        const exercises = userPlan[type].filter(ex => ex.type === 'reps');
         const labels = [...new Set(history.map(h => h.date))].sort();
         const datasets = [];
 
@@ -622,32 +716,20 @@
             const data = labels.map(date => {
                 const session = history.find(h => h.date === date);
                 return (session && session.exercises[ex.id]) ? Math.max(...session.exercises[ex.id].map(s => s.r || null)) : null;
-            }).filter(v => v !== null);
-            if(data.length > 0) {
-                datasets.push({ 
-                    label: ex.name, 
-                    data, 
-                    borderColor: `hsl(${180 + idx * 40}, 70%, 60%)`, 
-                    tension: 0.4, 
-                    spanGaps: true, 
-                    pointRadius: 4 
-                });
-            }
+            });
+            datasets.push({ 
+                label: ex.name, data, 
+                borderColor: `hsl(${180 + idx * 40}, 70%, 60%)`, 
+                tension: 0.4, spanGaps: true, pointRadius: 4 
+            });
         });
 
         if (repsChart) repsChart.destroy();
         repsChart = new Chart(document.getElementById('repsOnlyChart').getContext('2d'), {
-            type: 'line', 
-            data: { labels, datasets },
+            type: 'line', data: { labels, datasets },
             options: { 
-                responsive: true, 
-                maintainAspectRatio: false, 
-                plugins: { 
-                    legend: { 
-                        position: 'bottom', 
-                        labels: { color: '#ccc', font: { size: 10 } } 
-                    } 
-                },
+                responsive: true, maintainAspectRatio: false,
+                plugins: { legend: { position: 'bottom', labels: { color: '#ccc', font: { size: 10 } } } },
                 scales: { 
                     y: { ticks: { color: '#888' }, grid: { color: '#222' } }, 
                     x: { ticks: { color: '#888' }, grid: { color: '#222' } } 
@@ -656,50 +738,136 @@
         });
     }
 
-    function addGoal() {
-        const goal = { name: document.getElementById('goal-name').value, value: parseFloat(document.getElementById('goal-value').value), exId: document.getElementById('goal-ex-id').value };
-        if(!goal.name || !goal.value) return alert('Ошибка: заполните цель!');
-        const goals = JSON.parse(localStorage.getItem('fitnessGoals') || '[]');
-        goals.push(goal);
-        localStorage.setItem('fitnessGoals', JSON.stringify(goals));
-        renderGoals();
-    }
-
-    function renderGoals() {
-        const goals = JSON.parse(localStorage.getItem('fitnessGoals') || '[]');
+    function updateVolumeChart() {
         const history = JSON.parse(localStorage.getItem('fitnessHistory') || '[]');
-        const container = document.getElementById('goals-list');
-        const select = document.getElementById('goal-ex-id');
-        select.innerHTML = '';
-        Object.values(userPlan).flat().forEach(ex => { select.innerHTML += `<option value="${ex.id}">${ex.name}</option>`; });
-        let html = '';
-        goals.forEach((g, i) => {
-            let currentMax = 0;
-            history.forEach(sess => { 
-                if(sess.exercises[g.exId]) { 
-                    const max = Math.max(...sess.exercises[g.exId].map(s => s.w || 0)); 
-                    if(max > currentMax) currentMax = max; 
-                } 
+        const sorted = [...history].sort((a,b) => new Date(a.date) - new Date(b.date));
+        const labels = sorted.map(h => h.date);
+        const data = sorted.map(h => {
+            let vol = 0;
+            Object.values(h.exercises).forEach(ex => {
+                ex.forEach(s => { if (s && s.w && s.r) vol += s.w * s.r; });
             });
-            const groupKey = Object.keys(userPlan).find(k => userPlan[k].some(e => e.id === g.exId));
-            const startVal = userPlan[groupKey].find(e => e.id === g.exId).start;
-            const progress = Math.min(100, Math.max(0, ((currentMax - startVal) / (g.value - startVal)) * 100)) || 0;
-            html += `<div class="goal-item"><div style="display:flex; justify-content:space-between; font-size:14px;"><strong style="color:var(--text); white-space: normal;">${g.name}</strong><span style="color:var(--accent)">${currentMax} / ${g.value} кг</span></div>
-            <div class="progress-container"><div class="progress-bar" style="width:${progress}%"></div></div>
-            <div style="display:flex; justify-content:space-between; font-size:11px; color:var(--text-dim)"><span>Прогресс: ${Math.round(progress)}%</span><span style="color:var(--danger); cursor:pointer" onclick="deleteGoal(${i})">Удалить</span></div></div>`;
+            return vol;
         });
-        container.innerHTML = html;
+
+        if (volumeChart) volumeChart.destroy();
+        const ctx = document.getElementById('volumeChart').getContext('2d');
+        const gradient = ctx.createLinearGradient(0, 0, 0, 250);
+        gradient.addColorStop(0, 'rgba(192, 132, 252, 0.8)');
+        gradient.addColorStop(1, 'rgba(192, 132, 252, 0.1)');
+        
+        volumeChart = new Chart(ctx, {
+            type: 'bar',
+            data: { labels, datasets: [{ label: 'Тоннаж (кг)', data, backgroundColor: gradient, borderColor: '#c084fc', borderWidth: 1 }] },
+            options: { 
+                responsive: true, maintainAspectRatio: false,
+                plugins: { legend: { labels: { color: '#ccc', font: { size: 10 } } } },
+                scales: { 
+                    y: { ticks: { color: '#888' }, grid: { color: '#222' } }, 
+                    x: { ticks: { color: '#888', font: { size: 9 } }, grid: { color: '#222' } } 
+                } 
+            }
+        });
     }
 
-    function deleteGoal(idx) {
-        const goals = JSON.parse(localStorage.getItem('fitnessGoals') || '[]');
-        goals.splice(idx, 1);
-        localStorage.setItem('fitnessGoals', JSON.stringify(goals));
-        renderGoals();
+    function renderMuscleMap() {
+        const history = JSON.parse(localStorage.getItem('fitnessHistory') || '[]');
+        const muscleVolume = {};
+        
+        // Считаем суммарный объём по каждой мышце за ВСЕ тренировки
+        history.forEach(h => {
+            Object.entries(h.exercises).forEach(([exId, sets]) => {
+                const distribution = MUSCLE_DISTRIBUTION[exId];
+                if (!distribution) return;
+                let volume = 0;
+                sets.forEach(s => {
+                    if (s) {
+                        if (s.w && s.r) volume += s.w * s.r;
+                        else if (s.r) volume += s.r * 10; // условный объём
+                    }
+                });
+                Object.entries(distribution).forEach(([muscle, coeff]) => {
+                    muscleVolume[muscle] = (muscleVolume[muscle] || 0) + volume * coeff;
+                });
+            });
+        });
+        
+        const maxVol = Math.max(...Object.values(muscleVolume), 1);
+        
+        // Применяем цвет к каждой мышце
+        document.querySelectorAll('.muscle').forEach(el => {
+            const muscle = el.dataset.muscle;
+            const vol = muscleVolume[muscle] || 0;
+            const intensity = Math.pow(vol / maxVol, 0.6); // нелинейная шкала для лучшей видимости
+            
+            // Интерполяция: серый → фиолетовый → золотой
+            let r, g, b;
+            if (intensity < 0.5) {
+                const t = intensity * 2;
+                r = Math.round(42 + t * (192 - 42));
+                g = Math.round(42 + t * (132 - 42));
+                b = Math.round(58 + t * (252 - 58));
+            } else {
+                const t = (intensity - 0.5) * 2;
+                r = Math.round(192 + t * (251 - 192));
+                g = Math.round(132 + t * (191 - 132));
+                b = Math.round(252 + t * (36 - 252));
+            }
+            el.style.fill = `rgb(${r},${g},${b})`;
+            el.style.opacity = 0.5 + intensity * 0.5;
+        });
+        
+        // Легенда
+        const legend = document.getElementById('muscle-legend');
+        const sortedMuscles = Object.entries(muscleVolume).sort((a,b) => b[1] - a[1]);
+        legend.innerHTML = sortedMuscles.map(([m, v]) => {
+            const pct = Math.round((v / maxVol) * 100);
+            return `<div class="legend-item"><span class="legend-name">${MUSCLE_NAMES[m] || m}</span><span class="legend-val">${pct}%</span></div>`;
+        }).join('');
+    }
+
+    function renderPRList() {
+        const history = JSON.parse(localStorage.getItem('fitnessHistory') || '[]');
+        const prs = {};
+        
+        // Собираем все упражнения из плана
+        const allExercises = {};
+        Object.values(userPlan).flat().forEach(ex => { allExercises[ex.id] = ex.name; });
+        
+        history.forEach(h => {
+            Object.entries(h.exercises).forEach(([exId, sets]) => {
+                sets.forEach(s => {
+                    if (s && s.w && (!prs[exId] || s.w > prs[exId].weight)) {
+                        prs[exId] = { weight: s.w, date: h.date };
+                    }
+                });
+            });
+        });
+        
+        const sorted = Object.entries(prs).sort((a,b) => b[1].weight - a[1].weight).slice(0, 6);
+        const list = document.getElementById('pr-list');
+        
+        if (sorted.length === 0) {
+            list.innerHTML = '<div style="text-align:center; color:var(--text-dim); font-size:12px; padding:15px;">Пока нет рекордов. Начни тренировки!</div>';
+            return;
+        }
+        
+        list.innerHTML = sorted.map(([exId, pr], i) => `
+            <div class="pr-item">
+                <span class="pr-name">${i+1}. ${allExercises[exId] || exId}</span>
+                <span class="pr-val">${pr.weight} кг</span>
+            </div>
+        `).join('');
     }
 
     function saveMetrics() {
-        const m = { date: new Date().toLocaleDateString(), w: parseFloat(document.getElementById('m-weight').value), c: parseFloat(document.getElementById('m-chest').value), wa: parseFloat(document.getElementById('m-waist').value), h: parseFloat(document.getElementById('m-hips').value) };
+        const m = { 
+            date: new Date().toLocaleDateString(), 
+            w: parseFloat(document.getElementById('m-weight').value), 
+            c: parseFloat(document.getElementById('m-chest').value), 
+            wa: parseFloat(document.getElementById('m-waist').value), 
+            h: parseFloat(document.getElementById('m-hips').value) 
+        };
         const history = JSON.parse(localStorage.getItem('metricsHistory') || '[]');
         history.push(m);
         localStorage.setItem('metricsHistory', JSON.stringify(history));
