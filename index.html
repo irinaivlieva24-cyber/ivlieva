@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Fitness OS: Pro Edition</title>
+    <title>Fitness OS: Evolution Edition</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
@@ -79,7 +79,9 @@
             color: white; border-radius: 12px; font-size: 15px; outline: none;
             width: 100%; box-sizing: border-box;
         }
+        .input-date { width: 90%; margin: 0 auto; display: block; }
 
+        /* Workout Layout */
         .ex-row { 
             background: var(--glass); padding: 15px; 
             border-radius: 20px; margin-bottom: 12px; border: 1px solid var(--glass-border);
@@ -89,27 +91,53 @@
         .ex-start { font-size: 11px; color: var(--accent); }
         .ex-start.increase { color: var(--gold); font-weight: 700; text-shadow: 0 0 5px var(--gold); }
         
+        /* Изменено: подходы в одну строку */
         .sets-grid { 
             display: grid; 
             grid-template-columns: repeat(3, 1fr); 
-            gap: 6px; 
+            gap: 8px; 
+            margin-bottom: 12px;
         }
         .set-box { 
-            background: #1a1a2a; padding: 8px 4px; border-radius: 12px; 
-            display: flex; flex-direction: column; align-items: center;
+            background: #1a1a2a; 
+            padding: 8px; 
+            border-radius: 14px; 
+            display: flex; 
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
             border: 1px solid var(--glass-border);
+            min-height: 60px;
         }
-        .set-label { font-size: 9px; color: var(--text-dim); text-transform: uppercase; margin-bottom: 4px; }
-        .input-pair { display: flex; gap: 3px; align-items: center; }
+        .set-label { 
+            font-size: 10px; 
+            color: var(--text-dim); 
+            text-transform: uppercase; 
+            margin-bottom: 4px;
+        }
+        .input-pair { 
+            display: flex; 
+            gap: 4px; 
+            align-items: center; 
+            width: 100%;
+        }
         .set-input { 
-            width: 30px; padding: 4px; background: #25253a; border: 1px solid #333; 
-            color: white; text-align: center; font-size: 12px; font-weight: 600; 
-            border-radius: 6px; outline: none;
+            width: 35px; /* Уменьшено */
+            padding: 4px; /* Уменьшено */
+            background: #25253a; 
+            border: 1px solid #333; 
+            color: white; 
+            text-align: center; 
+            font-size: 12px; 
+            font-weight: 600; 
+            border-radius: 6px; 
+            outline: none;
         }
+        /* Скрытие полей веса для упражнений без веса */
+        .no-weight .weight-input { display: none; }
 
         .increase-checkbox-row { 
             display: flex; align-items: center; gap: 10px; 
-            margin-top: 15px; padding-top: 10px; border-top: 1px solid var(--glass-border);
             font-size: 12px; color: var(--text-dim);
         }
         .increase-checkbox-row input { width: 18px; height: 18px; cursor: pointer; }
@@ -121,31 +149,59 @@
             text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 8px 15px var(--accent-glow);
         }
 
+        /* Goals */
         .goal-item { background: #1c1c2b; padding: 15px; border-radius: 18px; margin-bottom: 12px; border: 1px solid var(--glass-border); }
         .progress-container { background: #0a0a12; height: 8px; border-radius: 4px; margin: 12px 0; overflow: hidden; }
         .progress-bar { height: 100%; background: linear-gradient(to right, var(--accent), var(--success)); width: 0%; transition: width 0.6s ease; }
 
+        /* Settings */
         .settings-group { margin-bottom: 25px; }
         .settings-group h3 { font-size: 16px; color: var(--accent); margin-bottom: 12px; padding-left: 10px; border-left: 3px solid var(--accent); }
         .settings-ex-item { 
-            display: grid; grid-template-columns: 1fr auto auto auto; align-items: center; gap: 8px;
+            display: grid; grid-template-columns: 1fr auto auto auto; align-items: center; gap: 10px;
             background: var(--glass); padding: 10px; border-radius: 12px; margin-bottom: 8px; 
             border: 1px solid var(--glass-border);
         }
         .btn-del { background: none; color: var(--danger); border: 1px solid var(--danger); padding: 4px 8px; border-radius: 6px; cursor: pointer; font-size: 11px; }
+        .type-toggle { 
+            display: flex; 
+            gap: 5px; 
+            font-size: 10px;
+        }
+        .type-btn {
+            padding: 3px 6px;
+            border-radius: 4px;
+            background: #333;
+            color: #999;
+            cursor: pointer;
+            font-size: 10px;
+        }
+        .type-btn.active {
+            background: var(--accent);
+            color: white;
+        }
 
-        .add-ex-form { display: grid; grid-template-columns: 1fr 60px 60px auto; gap: 8px; margin-top: 12px; }
+        .add-ex-form { display: grid; grid-template-columns: 1fr 70px auto auto; gap: 8px; margin-top: 12px; }
         .add-ex-form input { padding: 8px; font-size: 13px; }
         .btn-add { background: var(--accent); color: white; border: none; border-radius: 8px; width: 35px; height: 35px; cursor: pointer; font-weight: bold; }
 
+        /* Metrics */
         .metrics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .chart-section { background: #161625; padding: 15px; border-radius: 20px; margin-top: 20px; border: 1px solid var(--glass-border); height: 280px; }
+        .reminder-banner { 
+            background: rgba(192, 132, 252, 0.15); border: 1px solid var(--accent); 
+            padding: 12px; border-radius: 15px; margin-bottom: 20px; 
+            font-size: 13px; color: var(--accent); text-align: center;
+            display: none;
+        }
 
+        /* Summary */
         .summary-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 20px; }
         .summary-box { background: var(--glass); padding: 15px; border-radius: 15px; border: 1px solid var(--glass-border); text-align: center; }
         .summary-val { font-size: 20px; font-weight: 800; color: var(--accent); display: block; }
         .summary-lab { font-size: 11px; color: var(--text-dim); text-transform: uppercase; }
 
+        /* Modal */
         #reset-modal { 
             position: fixed; top: 0; left: 0; right: 0; bottom: 0; 
             background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); 
@@ -166,7 +222,7 @@
         <h2 style="color: #fff;">⚡️ ТРЕНИРОВКА</h2>
         <div class="form-group">
             <label>Дата</label>
-            <input type="date" id="workout-date" style="width: 90%; margin: 0 auto; display: block;" onchange="checkExistingWorkout()">
+            <input type="date" id="workout-date" class="input-date" onchange="checkExistingWorkout()">
         </div>
         <div class="form-group">
             <label>Направление</label>
@@ -193,14 +249,18 @@
         </div>
         <div class="form-group">
             <label>Анализ группы</label>
-            <select id="chart-group-select" onchange="updateGroupCharts()">
+            <select id="chart-group-select" onchange="updateGroupChart()">
                 <option value="PULL">Спина и бицепс</option>
                 <option value="PUSH">Грудь и трицепс</option>
                 <option value="LEGS">Ноги и ягодицы</option>
             </select>
         </div>
-        <div class="chart-section"><canvas id="weightChart"></canvas></div>
-        <div class="chart-section"><canvas id="repsChart"></canvas></div>
+        <div class="chart-section">
+            <canvas id="groupChart"></canvas>
+        </div>
+        <div class="chart-section">
+            <canvas id="repsOnlyChart"></canvas>
+        </div>
     </div>
 
     <div id="tab-goals" class="card">
@@ -221,7 +281,7 @@
 
     <div id="tab-metrics" class="card">
         <h2 style="color: #fff;">📏 ЗАМЕРЫ</h2>
-        <div id="metrics-reminder" class="reminder-banner" style="background: rgba(192, 132, 252, 0.15); border: 1px solid var(--accent); padding: 12px; border-radius: 15px; margin-bottom: 20px; font-size: 13px; color: var(--accent); text-align: center; display: none;">📏 Пора провести контрольные замеры!</div>
+        <div id="metrics-reminder" class="reminder-banner">📏 Пора провести контрольные замеры!</div>
         <div class="metrics-grid">
             <div class="form-group"><label>Вес (кг)</label><input type="number" id="m-weight" step="0.1"></div>
             <div class="form-group"><label>Бедра (см)</label><input type="number" id="m-hips"></div>
@@ -229,8 +289,8 @@
             <div class="form-group"><label>Талия (см)</label><input type="number" id="m-waist"></div>
         </div>
         <button class="btn-main" onclick="saveMetrics()">Сохранить замеры</button>
-        <div class="chart-section"><canvas id="mWeightChart"></canvas></div>
-        <div class="chart-section"><canvas id="mDimsChart"></canvas></div>
+        <div class="chart-section"><canvas id="weightChart"></canvas></div>
+        <div class="chart-section"><canvas id="dimsChart"></canvas></div>
     </div>
 
     <div id="tab-settings" class="card">
@@ -282,15 +342,38 @@
 
 <script>
     const DEFAULT_PLAN = {
-        PULL: [{id:'pull1',name:'Подтягивания (нег.)',start:0,type:'reps'},{id:'pull2',name:'Тяга верх. блока',start:45,type:'both'},{id:'pull3',name:'Гориз. тяга',start:20,type:'both'},{id:'pull4',name:'Махи в наклоне',start:5,type:'both'},{id:'pull5',name:'Бицепс в блоке',start:10,type:'both'}],
-        PUSH: [{id:'push1',name:'Жим на грудь',start:25,type:'both'},{id:'push2',name:'Жим на плечи',start:10,type:'both'},{id:'push3',name:'Бабочка',start:20,type:'both'},{id:'push4',name:'Разведения в ст.',start:5,type:'both'},{id:'push5',name:'Брусья (трен.)',start:42,type:'both'},{id:'push6',name:'Гантели за гол.',start:5,type:'both'}],
-        LEGS: [{id:'legs1',name:'Жим ногами',start:65,type:'both'},{id:'legs2',name:'Ягодичный мост',start:30,type:'both'},{id:'legs3',name:'Выпады в Смите',start:20,type:'both'},{id:'legs4',name:'Разгибание ног',start:12,type:'both'},{id:'legs5',name:'Сгибание ног',start:15,type:'both'},{id:'legs6',name:'Отведение ноги',start:10,type:'both'}]
+        PULL: [
+            {id:'pull1',name:'Подтягивания (нег.)',start:0,type:'reps'},
+            {id:'pull2',name:'Тяга верх. блока',start:45,type:'weight'},
+            {id:'pull3',name:'Гориз. тяга',start:20,type:'weight'},
+            {id:'pull4',name:'Махи в наклоне',start:5,type:'weight'},
+            {id:'pull5',name:'Бицепс в блоке',start:10,type:'weight'}
+        ],
+        PUSH: [
+            {id:'push1',name:'Жим на грудь',start:25,type:'weight'},
+            {id:'push2',name:'Жим на плечи',start:10,type:'weight'},
+            {id:'push3',name:'Бабочка',start:20,type:'weight'},
+            {id:'push4',name:'Разведения в ст.',start:5,type:'weight'},
+            {id:'push5',name:'Брусья (трен.)',start:42,type:'reps'},
+            {id:'push6',name:'Гантели за гол.',start:5,type:'weight'}
+        ],
+        LEGS: [
+            {id:'legs1',name:'Жим ногами',start:65,type:'weight'},
+            {id:'legs2',name:'Ягодичный мост',start:30,type:'weight'},
+            {id:'legs3',name:'Выпады в Смите',start:20,type:'weight'},
+            {id:'legs4',name:'Разгибание ног',start:12,type:'weight'},
+            {id:'legs5',name:'Сгибание ног',start:15,type:'weight'},
+            {id:'legs6',name:'Отведение ноги',start:10,type:'weight'}
+        ]
     };
 
     let userPlan = JSON.parse(localStorage.getItem('userPlan')) || DEFAULT_PLAN;
-    let wChart = null, rChart = null, mWeightChart = null, mDimsChart = null;
+    let myChart = null, repsChart = null, wChart = null, dChart = null;
 
-    function initApp() { document.getElementById('workout-date').valueAsDate = new Date(); showTab('add'); }
+    function initApp() {
+        document.getElementById('workout-date').valueAsDate = new Date();
+        showTab('add');
+    }
 
     function showTab(tab) {
         document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
@@ -299,9 +382,9 @@
         const activeNav = document.getElementById('nav-' + tab);
         if (activeTab) activeTab.classList.add('active');
         if (activeNav) activeNav.classList.add('active');
-        if(tab === 'stats') { updateSummary(); updateGroupCharts(); }
+        if(tab === 'stats') { updateSummary(); updateGroupChart(); updateRepsOnlyChart(); }
         if(tab === 'goals') renderGoals();
-        if(tab === 'metrics') { checkMeasurementReminder(); renderMetricsCharts(); }
+        if(tab === 'metrics') { checkMeasurementReminder(); renderMetricsChart(); }
     }
 
     function getWorkingWeight(exId) {
@@ -309,7 +392,7 @@
         let max = 0;
         history.forEach(sess => {
             if(sess.exercises[exId]) {
-                const localMax = Math.max(...sess.exercises[exId].filter(s => s.w).map(s => s.w));
+                const localMax = Math.max(...sess.exercises[exId].map(s => s.w || 0));
                 if(localMax > max) max = localMax;
             }
         });
@@ -318,10 +401,20 @@
 
     function shouldIncrease(exId) {
         const history = JSON.parse(localStorage.getItem('fitnessHistory') || '[]');
-        const filtered = history.filter(h => h.exercises[exId]);
-        if(!filtered.length) return false;
-        const last = filtered.sort((a,b) => new Date(b.date) - new Date(a.date))[0];
-        return last.exercises[exId].canIncrease || false;
+        const lastSession = history.filter(h => h.exercises[exId]).sort((a,b) => new Date(b.date) - new Date(a.date))[0];
+        return lastSession ? lastSession.exercises[exId].canIncrease : false;
+    }
+
+    function getMaxReps(exId) {
+        const history = JSON.parse(localStorage.getItem('fitnessHistory') || '[]');
+        let max = 0;
+        history.forEach(sess => {
+            if(sess.exercises[exId]) {
+                const localMax = Math.max(...sess.exercises[exId].map(s => s.r || 0));
+                if(localMax > max) max = localMax;
+            }
+        });
+        return max;
     }
 
     function renderExerciseList() {
@@ -336,13 +429,17 @@
         
         let html = '';
         userPlan[type].forEach(ex => {
-            const workingWeight = getWorkingWeight(ex.id);
+            const exType = ex.type || 'weight';
+            const workingValue = exType === 'weight' ? getWorkingWeight(ex.id) : getMaxReps(ex.id);
             const needsIncrease = shouldIncrease(ex.id);
-            const label = workingWeight > 0 ? `Рабочий вес: ${workingWeight}кг (макс)` : `Старт: ${ex.start}кг`;
+            const label = workingValue > 0 ? 
+                (exType === 'weight' ? `Рабочий вес: ${workingValue}кг (макс)` : `Макс. повторов: ${workingValue}`) : 
+                (exType === 'weight' ? `Старт: ${ex.start}кг` : `Старт: ${ex.start} повторов`);
+            
             const setsData = (draft && draft[ex.id]) ? draft[ex.id] : (existing && existing.exercises[ex.id] ? existing.exercises[ex.id] : []);
 
             html += `
-            <div class="ex-row">
+            <div class="ex-row ${exType === 'reps' ? 'no-weight' : ''}">
                 <div class="ex-header">
                     <span class="ex-name">${ex.name}</span>
                     <span class="ex-start ${needsIncrease ? 'increase' : ''}">${needsIncrease ? '🚀 Пора прибавить! ' : ''}${label}</span>
@@ -352,15 +449,17 @@
                         <div class="set-box">
                             <span class="set-label">Подход ${i+1}</span>
                             <div class="input-pair">
-                                ${ex.type === 'both' ? `<input type="number" class="set-w" data-ex="${ex.id}" data-set="${i}" value="${setsData[i]?.w || ''}" placeholder="кг" oninput="autoSave()">` : ''}
-                                <input type="number" class="set-r" data-ex="${ ex.id }" data-set="${i}" value="${setsData[i]?.r || ''}" placeholder="пов" oninput="autoSave()">
+                                ${exType === 'weight' ? `<input type="number" class="set-input weight-input" data-ex="${ex.id}" data-set="${i}" 
+                                    value="${setsData[i] ? setsData[i].w : ''}" placeholder="кг" oninput="autoSave()">` : ''}
+                                <input type="number" class="set-input" data-ex="${ex.id}" data-set="${i}" 
+                                    value="${setsData[i] ? setsData[i].r : ''}" placeholder="пов" oninput="autoSave()">
                             </div>
                         </div>
                     `).join('')}
                 </div>
                 <div class="increase-checkbox-row">
-                    <input type="checkbox" class="set-inc" data-ex="${ex.id}" ${ (draft && draft[ex.id + '_inc']) ? 'checked' : (existing && existing.exercises[ex.id]?.canIncrease ? 'checked' : '') } onchange="autoSaveInc(${ex.id}, this.checked)">
-                    <span>Можно переходить на новый вес</span>
+                    <input type="checkbox" class="set-inc" data-ex="${ex.id}" ${ (draft && draft[ex.id + '_inc']) ? 'checked' : (existing && existing.exercises[ex.id]?.canIncrease ? 'checked' : '') } onchange="autoSaveInc('${ex.id}', this.checked)">
+                    <span>Можно переходить на новый вес/повторы</span>
                 </div>
             </div>`;
         });
@@ -371,18 +470,19 @@
         const type = document.getElementById('workout-type').value;
         const date = document.getElementById('workout-date').value;
         if(!type || !date) return;
+
         const draft = JSON.parse(localStorage.getItem('currentDraft') || '{}');
-        document.querySelectorAll('.set-w').forEach(input => {
+        document.querySelectorAll('.weight-input').forEach(input => {
             const exId = input.dataset.ex, setIdx = parseInt(input.dataset.set);
             if(!draft[exId]) draft[exId] = [];
             if(!draft[exId][setIdx]) draft[exId][setIdx] = {};
-            draft[exId][setIdx].w = input.value;
+            draft[exId][setIdx].w = input.value ? parseFloat(input.value) : null;
         });
-        document.querySelectorAll('.set-r').forEach(input => {
+        document.querySelectorAll('.set-input:not(.weight-input)').forEach(input => {
             const exId = input.dataset.ex, setIdx = parseInt(input.dataset.set);
             if(!draft[exId]) draft[exId] = [];
             if(!draft[exId][setIdx]) draft[exId][setIdx] = {};
-            draft[exId][setIdx].r = input.value;
+            draft[exId][setIdx].r = input.value ? parseInt(input.value) : null;
         });
         localStorage.setItem('currentDraft', JSON.stringify(draft));
     }
@@ -391,6 +491,17 @@
         const draft = JSON.parse(localStorage.getItem('currentDraft') || '{}');
         draft[exId + '_inc'] = val;
         localStorage.setItem('currentDraft', JSON.stringify(draft));
+        // Обновляем отображение немедленно
+        const startEl = document.querySelector(`.ex-row[data-ex-id="${exId}"] .ex-start`);
+        if(startEl) {
+            startEl.classList.toggle('increase', val);
+            if(val) {
+                startEl.innerHTML = startEl.innerHTML.replace('🚀 Пора прибавить! ', '');
+                startEl.innerHTML = '🚀 Пора прибавить! ' + startEl.innerHTML;
+            } else {
+                startEl.innerHTML = startEl.innerHTML.replace('🚀 Пора прибавить! ', '');
+            }
+        }
     }
 
     function checkExistingWorkout() {
@@ -398,7 +509,8 @@
         const type = document.getElementById('workout-type').value;
         if(!type) return;
         const history = JSON.parse(localStorage.getItem('fitnessHistory') || '[]');
-        if(history.find(h => h.date === date && h.type === type)) alert('На эту дату уже есть тренировка. Вы можете её отредактировать.');
+        const exists = history.find(h => h.date === date && h.type === type);
+        if(exists) alert('На эту дату уже есть тренировка. Вы можете отредактировать её.');
         renderExerciseList();
     }
 
@@ -406,19 +518,26 @@
         const date = document.getElementById('workout-date').value;
         const type = document.getElementById('workout-type').value;
         if (!date || !type) return alert('Ошибка: дата и группа обязательны!');
+
         const workout = { date, type, exercises: {} };
-        const weights = document.querySelectorAll('.set-w'), reps = document.querySelectorAll('.set-r');
+        const weights = document.querySelectorAll('.weight-input'), reps = document.querySelectorAll('.set-input:not(.weight-input)');
         let exIdx = 0;
         userPlan[type].forEach(ex => {
+            const exType = ex.type || 'weight';
             const sets = [];
             for(let i=0; i<3; i++) {
-                const w = weights[exIdx * 3 + i]?.value, r = reps[exIdx * 3 + i]?.value;
-                if(w || r) sets.push({ w: w ? parseFloat(w) : 0, r: r ? parseInt(r) : 0 });
+                let w = null, r = null;
+                if(exType === 'weight') {
+                    w = weights[exIdx * 3 + i]?.value ? parseFloat(weights[exIdx * 3 + i].value) : null;
+                }
+                r = reps[exIdx * 3 + i]?.value ? parseInt(reps[exIdx * 3 + i].value) : null;
+                if(w !== null || r !== null) sets.push({ w: w, r: r });
             }
             workout.exercises[ex.id] = sets;
             workout.exercises[ex.id].canIncrease = document.querySelector(`.increase-checkbox-row input[data-ex="${ex.id}"]`)?.checked || false;
             exIdx++;
         });
+
         let history = JSON.parse(localStorage.getItem('fitnessHistory') || '[]');
         history = history.filter(h => !(h.date === date && h.type === type));
         history.push(workout);
@@ -435,55 +554,105 @@
         document.getElementById('stat-pull').textContent = history.filter(h => h.type === 'PULL').length;
         document.getElementById('stat-push').textContent = history.filter(h => h.type === 'PUSH').length;
         document.getElementById('stat-legs').textContent = history.filter(h => h.type === 'LEGS').length;
-        let totalS = 0, filledS = 0;
+        
+        // Calculation of total fulfillment %
+        let totalPotentialSets = 0, filledSets = 0;
         history.forEach(h => {
             Object.values(h.exercises).forEach(ex => {
-                if(Array.isArray(ex)) {
-                    totalS += 3;
-                    filledS += ex.filter(s => s.w > 0 || s.r > 0).length;
-                }
+                totalPotentialSets += 3;
+                filledSets += ex.filter(s => (s.w !== null && s.w !== undefined) || (s.r !== null && s.r !== undefined)).length;
             });
         });
-        document.getElementById('stat-perf').textContent = totalS ? Math.round((filledS/totalS)*100) + '%' : '0%';
+        document.getElementById('stat-perf').textContent = totalPotentialSets ? Math.round((filledSets/totalPotentialSets)*100) + '%' : '0%';
     }
 
-    function updateGroupCharts() {
+    function updateGroupChart() {
         const type = document.getElementById('chart-group-select').value;
         const history = JSON.parse(localStorage.getItem('fitnessHistory') || '[]');
-        const exercises = userPlan[type];
+        const exercises = userPlan[type].filter(ex => ex.type !== 'reps'); // Только упражнения с весом
         const labels = [...new Set(history.map(h => h.date))].sort();
-        
-        const weightDatasets = [], repsDatasets = [];
+        const datasets = [];
 
         exercises.forEach((ex, idx) => {
             const data = labels.map(date => {
                 const session = history.find(h => h.date === date);
-                return (session && session.exercises[ex.id]) ? Math.max(...session.exercises[ex.id].map(s => s.w || 0)) : null;
-            });
-            const repsData = labels.map(date => {
-                const session = history.find(h => h.date === date);
-                return (session && session.exercises[ex.id]) ? Math.max(...session.exercises[ex.id].map(s => s.r || 0)) : null;
-            });
-
-            if(ex.type === 'both') {
-                weightDatasets.push({ label: ex.name, data, borderColor: `hsl(${idx * 70}, 70%, 60%)`, tension: 0.4, spanGaps: true, pointRadius: 4 });
-            } else {
-                repsDatasets.push({ label: ex.name, data: repsData, borderColor: `hsl(${idx * 70}, 70%, 60%)`, tension: 0.4, spanGaps: true, pointRadius: 4 });
+                return (session && session.exercises[ex.id]) ? Math.max(...session.exercises[ex.id].map(s => s.w || null)) : null;
+            }).filter(v => v !== null);
+            if(data.length > 0) {
+                datasets.push({ 
+                    label: ex.name, 
+                    data, 
+                    borderColor: `hsl(${idx * 70}, 70%, 60%)`, 
+                    tension: 0.4, 
+                    spanGaps: true, 
+                    pointRadius: 4 
+                });
             }
         });
 
-        if (wChart) wChart.destroy();
-        wChart = new Chart(document.getElementById('weightChart').getContext('2d'), {
-            type: 'line', data: { labels, datasets: weightDatasets },
-            options: { responsive: true, maintainAspectRatio: false, plugins: { title: { display: true, text: 'Динамика весов (кг)', color: '#fff' }, legend: { position: 'bottom', labels: { color: '#ccc', font: { size: 10 } } } },
-            scales: { y: { ticks: { color: '#888' }, grid: { color: '#222' } }, x: { ticks: { color: '#888' }, grid: { color: '#222' } } }
+        if (myChart) myChart.destroy();
+        myChart = new Chart(document.getElementById('groupChart').getContext('2d'), {
+            type: 'line', 
+            data: { labels, datasets },
+            options: { 
+                responsive: true, 
+                maintainAspectRatio: false, 
+                plugins: { 
+                    legend: { 
+                        position: 'bottom', 
+                        labels: { color: '#ccc', font: { size: 10 } } 
+                    } 
+                },
+                scales: { 
+                    y: { ticks: { color: '#888' }, grid: { color: '#222' } }, 
+                    x: { ticks: { color: '#888' }, grid: { color: '#222' } } 
+                } 
+            }
+        });
+    }
+
+    function updateRepsOnlyChart() {
+        const type = document.getElementById('chart-group-select').value;
+        const history = JSON.parse(localStorage.getItem('fitnessHistory') || '[]');
+        const exercises = userPlan[type].filter(ex => ex.type === 'reps'); // Только упражнения без веса
+        const labels = [...new Set(history.map(h => h.date))].sort();
+        const datasets = [];
+
+        exercises.forEach((ex, idx) => {
+            const data = labels.map(date => {
+                const session = history.find(h => h.date === date);
+                return (session && session.exercises[ex.id]) ? Math.max(...session.exercises[ex.id].map(s => s.r || null)) : null;
+            }).filter(v => v !== null);
+            if(data.length > 0) {
+                datasets.push({ 
+                    label: ex.name, 
+                    data, 
+                    borderColor: `hsl(${180 + idx * 40}, 70%, 60%)`, 
+                    tension: 0.4, 
+                    spanGaps: true, 
+                    pointRadius: 4 
+                });
+            }
         });
 
-        if (rChart) rChart.destroy();
-        rChart = new Chart(document.getElementById('repsChart').getContext('2d'), {
-            type: 'line', data: { labels, datasets: repsDatasets },
-            options: { responsive: true, maintainAspectRatio: false, plugins: { title: { display: true, text: 'Динамика повторов (пов)', color: '#fff' }, legend: { position: 'bottom', labels: { color: '#ccc', font: { size: 10 } } } },
-            scales: { y: { ticks: { color: '#888' }, grid: { color: '#222' } }, x: { ticks: { color: '#888' }, grid: { color: '#222' } } }
+        if (repsChart) repsChart.destroy();
+        repsChart = new Chart(document.getElementById('repsOnlyChart').getContext('2d'), {
+            type: 'line', 
+            data: { labels, datasets },
+            options: { 
+                responsive: true, 
+                maintainAspectRatio: false, 
+                plugins: { 
+                    legend: { 
+                        position: 'bottom', 
+                        labels: { color: '#ccc', font: { size: 10 } } 
+                    } 
+                },
+                scales: { 
+                    y: { ticks: { color: '#888' }, grid: { color: '#222' } }, 
+                    x: { ticks: { color: '#888' }, grid: { color: '#222' } } 
+                } 
+            }
         });
     }
 
@@ -506,7 +675,12 @@
         let html = '';
         goals.forEach((g, i) => {
             let currentMax = 0;
-            history.forEach(sess => { if(sess.exercises[g.exId]) { const max = Math.max(...sess.exercises[g.exId].map(s => s.w)); if(max > currentMax) currentMax = max; } });
+            history.forEach(sess => { 
+                if(sess.exercises[g.exId]) { 
+                    const max = Math.max(...sess.exercises[g.exId].map(s => s.w || 0)); 
+                    if(max > currentMax) currentMax = max; 
+                } 
+            });
             const groupKey = Object.keys(userPlan).find(k => userPlan[k].some(e => e.id === g.exId));
             const startVal = userPlan[groupKey].find(e => e.id === g.exId).start;
             const progress = Math.min(100, Math.max(0, ((currentMax - startVal) / (g.value - startVal)) * 100)) || 0;
@@ -545,20 +719,24 @@
     function renderMetricsChart() {
         const history = JSON.parse(localStorage.getItem('metricsHistory') || '[]');
         const labels = history.map(h => h.date);
+        
+        const weightData = history.map(h => h.w);
+        const dimData = [
+            { label: 'Бедра', data: history.map(h => h.h), color: '#03dac6' },
+            { label: 'Грудь', data: history.map(h => h.c), color: '#f87171' },
+            { label: 'Талия', data: history.map(h => h.wa), color: '#fbbf24' }
+        ];
+
         if (wChart) wChart.destroy();
         wChart = new Chart(document.getElementById('weightChart').getContext('2d'), {
-            type: 'line', data: { labels, datasets: [{ label: 'Вес (кг)', data: history.map(h => h.w), borderColor: '#bb86fc', tension: 0.4 }] },
-            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: '#ccc', font: { size: 10 } } } }, scales: { y: { ticks: { color: '#888' }, grid: { color: '#222' } }, x: { ticks: { color: '#888' }, grid: { color: '#222' } } }
+            type: 'line', data: { labels, datasets: [{ label: 'Вес (кг)', data: weightData, borderColor: '#bb86fc', tension: 0.4 }] },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: '#ccc', font: { size: 10 } } } }, scales: { y: { ticks: { color: '#888' }, grid: { color: '#222' } }, x: { ticks: { color: '#888' }, grid: { color: '#222' } } } }
         });
 
         if (dChart) dChart.destroy();
         dChart = new Chart(document.getElementById('dimsChart').getContext('2d'), {
-            type: 'line', data: { labels, datasets: [
-                { label: 'Бедра', data: history.map(h => h.h), borderColor: '#03dac6', tension: 0.4 },
-                { label: 'Грудь', data: history.map(h => h.c), borderColor: '#f87171', tension: 0.4 },
-                { label: 'Талия', data: history.map(h => h.wa), borderColor: '#fbbf24', tension: 0.4 }
-            ]},
-            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: '#ccc', font: { size: 10 } } } }, scales: { y: { ticks: { color: '#888' }, grid: { color: '#222' } }, x: { ticks: { color: '#888' }, grid: { color: '#222' } } }
+            type: 'line', data: { labels, datasets: dimData.map(d => ({ label: d.label, data: d.data, borderColor: d.color, tension: 0.4 })) },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: '#ccc', font: { size: 10 } } } }, scales: { y: { ticks: { color: '#888' }, grid: { color: '#222' } }, x: { ticks: { color: '#888' }, grid: { color: '#222' } } } }
         });
     }
 
@@ -569,32 +747,55 @@
         const groupName = { PULL: 'Спина и бицепс', PUSH: 'Грудь и трицепс', LEGS: 'Ноги и ягодицы' }[group];
         let html = `<div class="settings-group"><h3 style="color:var(--accent)">${groupName}</h3>`;
         userPlan[group].forEach((ex, idx) => {
+            const exType = ex.type || 'weight';
             html += `<div class="settings-ex-item">
                 <input type="text" style="flex:1; text-align:left; padding:5px" value="${ex.name}" onchange="updateExName('${group}', ${idx}, this.value)">
-                <select style="width:80px; padding:5px" onchange="updateExType('${group}', ${idx}, this.value)">
-                    <option value="both" ${ex.type === 'both' ? 'selected' : ''}>Вес+Повт</option>
-                    <option value="reps" ${ex.type === 'reps' ? 'selected' : ''}>Повт</option>
-                </select>
                 <input type="number" style="width:60px; padding:5px" value="${ex.start}" onchange="updateStartWeight('${group}', ${idx}, this.value)">
+                <div class="type-toggle">
+                    <div class="type-btn ${exType === 'weight' ? 'active' : ''}" onclick="toggleExType('${group}', ${idx}, 'weight')">Вес</div>
+                    <div class="type-btn ${exType === 'reps' ? 'active' : ''}" onclick="toggleExType('${group}', ${idx}, 'reps')">Повторы</div>
+                </div>
                 <button class="btn-del" onclick="deleteExercise('${group}', ${idx})">✕</button>
             </div>`;
         });
-        html += `<div class="add-ex-form"><input type="text" id="new-name-${group}" placeholder="Название"><input type="number" id="new-start-${group}" placeholder="кг"><button class="btn-add" onclick="addExercise('${group}')">+</button></div></div>`;
+        html += `<div class="add-ex-form">
+            <input type="text" id="new-name-${group}" placeholder="Название">
+            <input type="number" id="new-start-${group}" placeholder="значение">
+            <div class="type-toggle">
+                <div class="type-btn active" id="new-type-weight-${group}" onclick="setNewType('${group}', 'weight')">Вес</div>
+                <div class="type-btn" id="new-type-reps-${group}" onclick="setNewType('${group}', 'reps')">Повторы</div>
+            </div>
+            <button class="btn-add" onclick="addExercise('${group}')">+</button>
+        </div></div>`;
         container.innerHTML = html;
     }
 
     function updateExName(group, idx, val) { userPlan[group][idx].name = val; localStorage.setItem('userPlan', JSON.stringify(userPlan)); }
-    function updateExType(group, idx, val) { userPlan[group][idx].type = val; localStorage.setItem('userPlan', JSON.stringify(userPlan)); }
     function updateStartWeight(group, idx, val) { userPlan[group][idx].start = parseFloat(val); localStorage.setItem('userPlan', JSON.stringify(userPlan)); }
+    function toggleExType(group, idx, type) {
+        userPlan[group][idx].type = type;
+        localStorage.setItem('userPlan', JSON.stringify(userPlan));
+        renderSettingsGroup();
+    }
+    function setNewType(group, type) {
+        document.querySelectorAll(`#new-type-weight-${group}, #new-type-reps-${group}`).forEach(el => el.classList.remove('active'));
+        document.getElementById(`new-type-${type}-${group}`).classList.add('active');
+    }
     function addExercise(group) {
-        const name = document.getElementById(`new-name-${group}`).value, start = parseFloat(document.getElementById(`new-start-${group}`).value);
+        const name = document.getElementById(`new-name-${group}`).value;
+        const start = parseFloat(document.getElementById(`new-start-${group}`).value);
+        const type = document.querySelector(`#new-type-weight-${group}.active`) ? 'weight' : 'reps';
         if(!name) return alert('Введите название!');
-        userPlan[group].push({ id: 'custom_' + Date.now(), name: name, start: start || 0, type: 'both' });
+        userPlan[group].push({ id: 'custom_' + Date.now(), name: name, start: start || 0, type: type });
         localStorage.setItem('userPlan', JSON.stringify(userPlan));
         renderSettingsGroup();
     }
     function deleteExercise(group, idx) {
-        if(confirm('Удалить упражнение?')) { userPlan[group].splice(idx, 1); localStorage.setItem('userPlan', JSON.stringify(userPlan)); renderSettingsGroup(); }
+        if(confirm('Удалить упражнение?')) { 
+            userPlan[group].splice(idx, 1); 
+            localStorage.setItem('userPlan', JSON.stringify(userPlan)); 
+            renderSettingsGroup(); 
+        }
     }
 
     function confirmReset() { document.getElementById('reset-modal').style.display = 'flex'; }
@@ -612,6 +813,5 @@
         showTab('add');
     };
 </script>
-
 </body>
 </html>
