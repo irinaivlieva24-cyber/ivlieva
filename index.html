@@ -321,28 +321,19 @@
             margin-top: 4px;
         }
         
-        .solarium-toggle {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            padding: 10px 15px;
-            background: var(--glass);
-            border-radius: 12px;
-            border: 1px solid var(--glass-border);
-            cursor: pointer;
-        }
-        .solarium-toggle-label {
+        .solarium-section-header {
             font-size: 13px;
-            color: var(--text);
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 20px 0 12px 5px;
             font-weight: 600;
         }
-        .solarium-toggle-count {
-            font-size: 12px;
+        .solarium-section-header.active {
             color: var(--solarium);
-            background: rgba(249, 115, 22, 0.15);
-            padding: 4px 10px;
-            border-radius: 20px;
+        }
+        .solarium-section-header.completed {
+            color: var(--success);
         }
         
         .solarium-session {
@@ -392,7 +383,8 @@
             gap: 10px;
         }
         .solarium-date-wrapper {
-            width: 100%;
+            width: 95%;
+            margin: 0 auto;
         }
         .solarium-date-input {
             width: 100%;
@@ -427,22 +419,6 @@
             background: linear-gradient(135deg, var(--success), #16a34a);
             border-color: var(--success);
             box-shadow: 0 0 15px var(--success-glow);
-        }
-
-        .solarium-completed-section {
-            margin-top: 20px;
-        }
-        .solarium-completed-header {
-            font-size: 13px;
-            color: var(--text-dim);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 12px;
-            padding-left: 5px;
-        }
-        
-        .solarium-completed-section.hidden {
-            display: none;
         }
 
         #reset-modal { 
@@ -501,7 +477,7 @@
     </div>
 
     <div id="tab-stats" class="card">
-        <h2 style="color: #fff;">📈 АНАЛИТИКА</h2>
+        <h2 style="color: #fff;"> АНАЛИТИКА</h2>
         <div class="summary-grid">
             <div class="summary-box"><span class="summary-val" id="stat-total">-</span><span class="summary-lab">Всего сессий</span></div>
             <div class="summary-box"><span class="summary-val" id="stat-last">-</span><span class="summary-lab">Последний визит</span></div>
@@ -549,22 +525,15 @@
             </div>
         </div>
 
-        <div id="solarium-completed-sessions-container" class="solarium-completed-section">
-            <div class="solarium-completed-header">✅ Завершенные сеансы</div>
-            <div id="solarium-completed-sessions"></div>
-        </div>
-
-        <div class="solarium-toggle" onclick="toggleActiveSessions()">
-            <span class="solarium-toggle-label">📅 Активные сеансы</span>
-            <span class="solarium-toggle-count" id="active-count">0</span>
-        </div>
-        
+        <div class="solarium-section-header active"> Активные сеансы</div>
         <div id="solarium-active-sessions"></div>
 
+        <div class="solarium-section-header completed">✅ Завершенные сеансы</div>
+        <div id="solarium-completed-sessions"></div>
     </div>
 
     <div id="tab-metrics" class="card">
-        <h2 style="color: #fff;">📏 ЗАМЕРЫ</h2>
+        <h2 style="color: #fff;"> ЗАМЕРЫ</h2>
         <div class="form-group">
             <label>Дата замеров</label>
             <input type="date" id="metrics-date" class="input-date" onchange="loadMetricsForDate()">
@@ -842,7 +811,7 @@
             statusContainer.innerHTML = `<div class="status-badge finished">✅ Тренировка завершена. Вы можете отредактировать или удалить её.</div>`;
             deleteBtn.classList.add('visible');
         } else if (drafts[draftKey]) {
-            statusContainer.innerHTML = `<div class="status-badge draft">📝 Черновик (автосохранение включено)</div>`;
+            statusContainer.innerHTML = `<div class="status-badge draft"> Черновик (автосохранение включено)</div>`;
             deleteBtn.classList.remove('visible');
         } else {
             statusContainer.innerHTML = `<div class="status-badge draft">🆕 Новая тренировка</div>`;
@@ -1002,7 +971,6 @@
         
         let activeHtml = '';
         let completedHtml = '';
-        let activeCount = 0;
         
         plan.forEach((duration, index) => {
             const sessionNum = index + 1;
@@ -1042,27 +1010,11 @@
                 completedHtml += sessionHtml;
             } else {
                 activeHtml += sessionHtml;
-                activeCount++;
             }
         });
         
-        activeContainer.innerHTML = activeHtml || '<div style="text-align: center; color: var(--success); padding: 20px;">🎉 Все сеансы выполнены!</div>';
+        activeContainer.innerHTML = activeHtml || '<div style="text-align: center; color: var(--success); padding: 20px;"> Все сеансы выполнены!</div>';
         completedContainer.innerHTML = completedHtml || '<div style="text-align: center; color: var(--text-dim); padding: 20px;">Пока нет завершенных сеансов</div>';
-        
-        document.getElementById('active-count').textContent = activeCount;
-        
-        // Show/hide completed section
-        const completedSection = document.getElementById('solarium-completed-sessions-container');
-        if (completedHtml) {
-            completedSection.classList.remove('hidden');
-        } else {
-            completedSection.classList.add('hidden');
-        }
-    }
-
-    function toggleActiveSessions() {
-        const section = document.getElementById('solarium-active-sessions');
-        section.style.display = section.style.display === 'none' ? 'block' : 'none';
     }
 
     function updateSolariumDate(sessionNum, date) {
