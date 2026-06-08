@@ -546,7 +546,7 @@
             <div class="form-group"><label>Талия (см)</label><input type="number" id="m-waist"></div>
         </div>
         <div style="display: flex; gap: 10px; margin-top: 20px;">
-            <button class="btn-main" onclick="saveMetrics()" style="flex: 2;">💾 Сохранить замеры</button>
+            <button class="btn-main" onclick="saveMetrics()" style="flex: 2;">Сохранить замеры</button>
             <button class="btn-main danger-btn" id="delete-metrics-btn" onclick="deleteCurrentMetrics()" style="flex: 1; display: none;">🗑️ Удалить</button>
         </div>
         <div class="chart-section"><canvas id="weightChart"></canvas></div>
@@ -556,7 +556,7 @@
     <div id="tab-settings" class="card">
         <h2 style="color: #fff;">⚙️ НАСТРОЙКИ</h2>
         
-        <h3 style="margin-top: 0;">⚙️ Настройка тренировки</h3>
+        <h3 style="margin-top: 0;">Настройка тренировки</h3>
         <div class="form-group">
             <label>Выберите группу для настройки</label>
             <select id="settings-group-select" onchange="renderSettingsGroup()">
@@ -568,7 +568,7 @@
         </div>
         <div id="settings-container"></div>
         
-        <h3>⚙️ Настройка солярия</h3>
+        <h3>Настройка солярия</h3>
         <div class="form-group">
             <label>План сеансов (минуты через запятую)</label>
             <input type="text" id="solarium-plan-input" placeholder="2, 2, 4, 5, 6" onchange="updateSolariumPlan()">
