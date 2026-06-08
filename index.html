@@ -21,6 +21,8 @@
             --gold-glow: rgba(251, 191, 36, 0.5);
             --glass: rgba(255, 255, 255, 0.03);
             --glass-border: rgba(255, 255, 255, 0.08);
+            --solarium: #f97316;
+            --solarium-glow: rgba(249, 115, 22, 0.4);
         }
         * { box-sizing: border-box; }
         body { 
@@ -48,9 +50,9 @@
         }
         nav button { 
             border: none; background: none; color: var(--text-dim); 
-            font-size: 10px; font-weight: 500; cursor: pointer;
+            font-size: 9px; font-weight: 500; cursor: pointer;
             display: flex; flex-direction: column; align-items: center; gap: 4px;
-            transition: 0.3s; width: 25%;
+            transition: 0.3s; width: 20%;
         }
         nav button.active { color: var(--accent); }
         nav button .icon { font-size: 20px; filter: grayscale(1); }
@@ -271,6 +273,133 @@
         }
         .add-ex-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 16px var(--accent-glow); }
 
+        /* Solarium Styles */
+        .solarium-header {
+            text-align: center;
+            padding: 15px;
+            background: linear-gradient(135deg, rgba(249, 115, 22, 0.1), rgba(249, 115, 22, 0.05));
+            border: 1px solid rgba(249, 115, 22, 0.3);
+            border-radius: 16px;
+            margin-bottom: 20px;
+        }
+        .solarium-title {
+            font-size: 20px;
+            font-weight: 800;
+            background: linear-gradient(to right, var(--solarium), #fb923c);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 5px;
+        }
+        .solarium-subtitle {
+            font-size: 12px;
+            color: var(--text-dim);
+        }
+        
+        .solarium-session {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 15px;
+            margin-bottom: 12px;
+            transition: 0.3s;
+        }
+        .solarium-session.completed {
+            background: linear-gradient(135deg, rgba(74, 222, 128, 0.08), rgba(74, 222, 128, 0.03));
+            border-color: rgba(74, 222, 128, 0.3);
+        }
+        .solarium-session.pending {
+            border-color: rgba(249, 115, 22, 0.3);
+        }
+        
+        .solarium-session-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .solarium-session-number {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--solarium);
+        }
+        .solarium-session-number.completed {
+            color: var(--success);
+        }
+        .solarium-duration {
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--text);
+        }
+        .solarium-duration span {
+            font-size: 11px;
+            color: var(--text-dim);
+            font-weight: 400;
+        }
+        
+        .solarium-session-body {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 12px;
+            align-items: end;
+        }
+        .solarium-date-input {
+            width: 100%;
+        }
+        .solarium-checkbox-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+        .solarium-checkbox {
+            width: 40px;
+            height: 40px;
+            border: 2px solid var(--glass-border);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: 0.3s;
+            background: var(--glass);
+        }
+        .solarium-checkbox.checked {
+            background: linear-gradient(135deg, var(--success), #16a34a);
+            border-color: var(--success);
+            box-shadow: 0 0 15px var(--success-glow);
+        }
+        .solarium-checkbox-label {
+            font-size: 10px;
+            color: var(--text-dim);
+            text-transform: uppercase;
+        }
+        
+        .solarium-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .solarium-stat-box {
+            background: var(--glass);
+            padding: 12px;
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid var(--glass-border);
+        }
+        .solarium-stat-value {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--solarium);
+            display: block;
+        }
+        .solarium-stat-label {
+            font-size: 10px;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            margin-top: 4px;
+        }
+
         #reset-modal { 
             position: fixed; top: 0; left: 0; right: 0; bottom: 0; 
             background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); 
@@ -358,6 +487,32 @@
         </div>
     </div>
 
+    <div id="tab-solarium" class="card">
+        <div class="solarium-header">
+            <div class="solarium-title">☀️ СОЛЯРИЙ</div>
+            <div class="solarium-subtitle">План безопасного загара</div>
+        </div>
+        
+        <div class="solarium-stats">
+            <div class="solarium-stat-box">
+                <span class="solarium-stat-value" id="sol-total">0</span>
+                <div class="solarium-stat-label">Всего сеансов</div>
+            </div>
+            <div class="solarium-stat-box">
+                <span class="solarium-stat-value" id="sol-completed">0</span>
+                <div class="solarium-stat-label">Выполнено</div>
+            </div>
+            <div class="solarium-stat-box">
+                <span class="solarium-stat-value" id="sol-minutes">0</span>
+                <div class="solarium-stat-label">Минут всего</div>
+            </div>
+        </div>
+
+        <div id="solarium-sessions-container"></div>
+        
+        <button class="btn-main" onclick="resetSolariumPlan()" style="background: linear-gradient(135deg, var(--solarium), #ea580c); margin-top: 15px;">🔄 Сбросить план</button>
+    </div>
+
     <div id="tab-metrics" class="card">
         <h2 style="color: #fff;">📏 ЗАМЕРЫ</h2>
         <div class="form-group">
@@ -391,6 +546,16 @@
             </select>
         </div>
         <div id="settings-container"></div>
+        
+        <h3 style="margin-top: 30px;">⚙️ Настройка солярия</h3>
+        <div class="form-group">
+            <label>План сеансов (минуты через запятую)</label>
+            <input type="text" id="solarium-plan-input" placeholder="2, 2, 4, 5, 6" onchange="updateSolariumPlan()">
+            <div style="font-size: 11px; color: var(--text-dim); margin-top: 5px;">
+                Пример: 2, 2, 4, 5, 6, 7, 8, 9, 10, 10
+            </div>
+        </div>
+        
         <div style="margin-top: 40px; border-top: 1px solid var(--glass-border); padding-top: 20px;">
             <button class="btn-main danger-btn" onclick="confirmReset()">Сбросить все данные</button>
         </div>
@@ -414,6 +579,9 @@
     </button>
     <button id="nav-stats" onclick="showTab('stats')">
         <span class="icon">📈</span><span>Аналитика</span>
+    </button>
+    <button id="nav-solarium" onclick="showTab('solarium')">
+        <span class="icon">☀️</span><span>Солярий</span>
     </button>
     <button id="nav-metrics" onclick="showTab('metrics')">
         <span class="icon">📏</span><span>Замеры</span>
@@ -450,12 +618,23 @@
         ]
     };
 
+    const DEFAULT_SOLARIUM_PLAN = [2, 2, 4, 5, 6, 7, 8, 9, 10, 10];
+
     let userPlan = JSON.parse(localStorage.getItem('userPlan')) || DEFAULT_PLAN;
     let myChart = null, repsChart = null, wChart = null, dChart = null;
 
     function initApp() {
         document.getElementById('workout-date').valueAsDate = new Date();
         document.getElementById('metrics-date').valueAsDate = new Date();
+        
+        // Initialize solarium plan if not exists
+        if (!localStorage.getItem('solariumPlan')) {
+            localStorage.setItem('solariumPlan', JSON.stringify(DEFAULT_SOLARIUM_PLAN));
+        }
+        if (!localStorage.getItem('solariumHistory')) {
+            localStorage.setItem('solariumHistory', JSON.stringify([]));
+        }
+        
         showTab('add');
     }
 
@@ -479,6 +658,14 @@
             loadMetricsForDate(); 
             checkMeasurementReminder(); 
             renderMetricsChart(); 
+        }
+        if(tabName === 'solarium') {
+            renderSolariumSessions();
+            updateSolariumStats();
+        }
+        if(tabName === 'settings') {
+            const plan = JSON.parse(localStorage.getItem('solariumPlan') || '[]');
+            document.getElementById('solarium-plan-input').value = plan.join(', ');
         }
     }
 
@@ -747,6 +934,135 @@
 
         renderExerciseList();
         alert('Тренировка удалена.');
+    }
+
+    // Solarium Functions
+    function renderSolariumSessions() {
+        const plan = JSON.parse(localStorage.getItem('solariumPlan') || '[]');
+        const history = JSON.parse(localStorage.getItem('solariumHistory') || '[]');
+        const container = document.getElementById('solarium-sessions-container');
+        
+        if (plan.length === 0) {
+            container.innerHTML = '<div style="text-align: center; color: var(--text-dim); padding: 30px;">План не настроен. Добавьте сеансы в настройках.</div>';
+            return;
+        }
+        
+        let html = '';
+        plan.forEach((duration, index) => {
+            const sessionNum = index + 1;
+            const sessionHistory = history.find(h => h.session === sessionNum);
+            const isCompleted = sessionHistory && sessionHistory.completed;
+            const sessionDate = sessionHistory ? sessionHistory.date : '';
+            
+            html += `
+            <div class="solarium-session ${isCompleted ? 'completed' : 'pending'}">
+                <div class="solarium-session-header">
+                    <span class="solarium-session-number ${isCompleted ? 'completed' : ''}">
+                        ${isCompleted ? '✅' : '⏳'} Сеанс #${sessionNum}
+                    </span>
+                    <div class="solarium-duration">
+                        ${duration} <span>мин</span>
+                    </div>
+                </div>
+                <div class="solarium-session-body">
+                    <div class="form-group" style="margin: 0;">
+                        <input type="date" 
+                            class="solarium-date-input" 
+                            data-session="${sessionNum}"
+                            value="${sessionDate}"
+                            onchange="updateSolariumDate(${sessionNum}, this.value)">
+                    </div>
+                    <div class="solarium-checkbox-wrapper">
+                        <div class="solarium-checkbox ${isCompleted ? 'checked' : ''}" 
+                            onclick="toggleSolariumSession(${sessionNum})">
+                            ${isCompleted ? '✓' : ''}
+                        </div>
+                        <span class="solarium-checkbox-label">Готово</span>
+                    </div>
+                </div>
+            </div>`;
+        });
+        
+        container.innerHTML = html;
+    }
+
+    function updateSolariumDate(sessionNum, date) {
+        let history = JSON.parse(localStorage.getItem('solariumHistory') || '[]');
+        let session = history.find(h => h.session === sessionNum);
+        
+        if (session) {
+            session.date = date;
+        } else if (date) {
+            history.push({ session: sessionNum, date: date, completed: false });
+        }
+        
+        localStorage.setItem('solariumHistory', JSON.stringify(history));
+        updateSolariumStats();
+    }
+
+    function toggleSolariumSession(sessionNum) {
+        let history = JSON.parse(localStorage.getItem('solariumHistory') || '[]');
+        let session = history.find(h => h.session === sessionNum);
+        
+        if (session) {
+            session.completed = !session.completed;
+            if (!session.completed) {
+                session.date = '';
+            } else if (!session.date) {
+                session.date = new Date().toISOString().split('T')[0];
+            }
+        } else {
+            history.push({ 
+                session: sessionNum, 
+                date: new Date().toISOString().split('T')[0], 
+                completed: true 
+            });
+        }
+        
+        localStorage.setItem('solariumHistory', JSON.stringify(history));
+        renderSolariumSessions();
+        updateSolariumStats();
+    }
+
+    function updateSolariumStats() {
+        const plan = JSON.parse(localStorage.getItem('solariumPlan') || '[]');
+        const history = JSON.parse(localStorage.getItem('solariumHistory') || '[]');
+        
+        const completed = history.filter(h => h.completed).length;
+        const totalMinutes = history
+            .filter(h => h.completed)
+            .reduce((sum, h) => {
+                const duration = plan[h.session - 1] || 0;
+                return sum + duration;
+            }, 0);
+        
+        document.getElementById('sol-total').textContent = plan.length;
+        document.getElementById('sol-completed').textContent = completed;
+        document.getElementById('sol-minutes').textContent = totalMinutes;
+    }
+
+    function resetSolariumPlan() {
+        if (!confirm('Сбросить все отметки о посещениях солярия?')) return;
+        localStorage.setItem('solariumHistory', JSON.stringify([]));
+        renderSolariumSessions();
+        updateSolariumStats();
+    }
+
+    function updateSolariumPlan() {
+        const input = document.getElementById('solarium-plan-input').value;
+        const plan = input.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n) && n > 0);
+        
+        if (plan.length === 0) {
+            alert('Введите хотя бы одно значение!');
+            return;
+        }
+        
+        localStorage.setItem('solariumPlan', JSON.stringify(plan));
+        
+        // Clear history when plan changes
+        localStorage.setItem('solariumHistory', JSON.stringify([]));
+        
+        alert('План солярия обновлен! История посещений сброшена.');
     }
 
     function loadMetricsForDate() {
@@ -1047,6 +1363,8 @@
         localStorage.clear();
         userPlan = JSON.parse(JSON.stringify(DEFAULT_PLAN));
         localStorage.setItem('userPlan', JSON.stringify(userPlan));
+        localStorage.setItem('solariumPlan', JSON.stringify(DEFAULT_SOLARIUM_PLAN));
+        localStorage.setItem('solariumHistory', JSON.stringify([]));
         alert('Система сброшена!');
         location.reload();
     }
