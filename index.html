@@ -158,8 +158,8 @@
             text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 8px 15px var(--accent-glow);
         }
         .btn-main.finish-btn {
-            background: linear-gradient(135deg, var(--success), #16a34a);
-            box-shadow: 0 8px 15px var(--success-glow);
+            background: linear-gradient(to right, #fff, var(--accent));
+            box-shadow: 0 8px 15px var(--accent-glow);
         }
         .btn-main.danger-btn {
             background: rgba(239, 68, 68, 0.15);
@@ -260,7 +260,7 @@
         .btn-cancel { flex: 1; padding: 12px; background: #333; color: white; border: none; border-radius: 12px; cursor: pointer; }
     </style>
 </head>
-<body onload="initApp()">
+<body>
 
 <div class="app-container">
     <h1 style="margin-top: 0;">F I T N E S S &nbsp; O S</h1>
@@ -300,7 +300,7 @@
         <div id="exercise-list-container"></div>
         
         <div style="display: flex; gap: 10px; margin-top: 20px;">
-            <button class="btn-main finish-btn" id="finish-btn" onclick="finishWorkout()" style="flex: 2;">✅ Завершить тренировку</button>
+            <button class="btn-main finish-btn" id="finish-btn" onclick="finishWorkout()" style="flex: 2;">Завершить тренировку</button>
             <button class="btn-main danger-btn" id="delete-workout-btn" onclick="deleteCurrentWorkout()" style="flex: 1; display: none;">🗑️ Удалить</button>
         </div>
     </div>
@@ -438,15 +438,30 @@
         showTab('add');
     }
 
-    function showTab(tab) {
+    function showTab(tabName) {
+        // Скрываем все карточки
         document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
         document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
-        const activeTab = document.getElementById('tab-' + tab);
-        const activeNav = document.getElementById('nav-' + tab);
+        
+        // Показываем нужную
+        const activeTab = document.getElementById('tab-' + tabName);
+        const activeNav = document.getElementById('nav-' + tabName);
+        
         if (activeTab) activeTab.classList.add('active');
         if (activeNav) activeNav.classList.add('active');
-        if(tab === 'stats') { updateSummary(); updateGroupChart(); updateRepsOnlyChart(); renderPRList(); }
-        if(tab === 'metrics') { loadMetricsForDate(); checkMeasurementReminder(); renderMetricsChart(); }
+        
+        // Обновляем данные для вкладок
+        if(tabName === 'stats') { 
+            updateSummary(); 
+            updateGroupChart(); 
+            updateRepsOnlyChart(); 
+            renderPRList(); 
+        }
+        if(tabName === 'metrics') { 
+            loadMetricsForDate(); 
+            checkMeasurementReminder(); 
+            renderMetricsChart(); 
+        }
     }
 
     function getDraftKey() {
@@ -752,15 +767,13 @@
         };
 
         let history = JSON.parse(localStorage.getItem('metricsHistory') || '[]');
-        history = history.filter(h => h.date !== date); // Удаляем старую запись за эту дату (перезапись)
+        history = history.filter(h => h.date !== date);
         history.push(m);
-        
-        // Сортируем по дате для корректного отображения на графиках
         history.sort((a, b) => new Date(a.date) - new Date(b.date));
         
         localStorage.setItem('metricsHistory', JSON.stringify(history));
         renderMetricsChart();
-        loadMetricsForDate(); // Обновляем видимость кнопки удаления
+        loadMetricsForDate();
         alert('Замеры сохранены!');
     }
 
@@ -1020,11 +1033,10 @@
         location.reload();
     }
 
-    window.onload = () => {
-        document.getElementById('workout-date').valueAsDate = new Date();
-        document.getElementById('metrics-date').valueAsDate = new Date();
-        showTab('add');
-    };
+    // Инициализация при загрузке
+    window.addEventListener('DOMContentLoaded', function() {
+        initApp();
+    });
 </script>
 </body>
 </html>
