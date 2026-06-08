@@ -295,6 +295,32 @@
             color: var(--text-dim);
         }
         
+        .solarium-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .solarium-stat-box {
+            background: var(--glass);
+            padding: 12px;
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid var(--glass-border);
+        }
+        .solarium-stat-value {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--solarium);
+            display: block;
+        }
+        .solarium-stat-label {
+            font-size: 10px;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            margin-top: 4px;
+        }
+        
         .solarium-toggle {
             display: flex;
             justify-content: space-between;
@@ -362,54 +388,49 @@
         
         .solarium-session-body {
             display: flex;
-            gap: 12px;
-            align-items: stretch;
+            flex-direction: column;
+            gap: 10px;
         }
         .solarium-date-wrapper {
-            flex: 1;
+            width: 100%;
         }
         .solarium-date-input {
             width: 100%;
         }
         .solarium-checkbox-wrapper {
             display: flex;
-            flex-direction: column;
             align-items: center;
-            justify-content: center;
-            gap: 5px;
-            min-width: 60px;
+            justify-content: space-between;
+            gap: 10px;
+            padding-top: 8px;
+            border-top: 1px solid var(--glass-border);
+        }
+        .solarium-checkbox-label {
+            font-size: 11px;
+            color: var(--text-dim);
+            text-transform: uppercase;
         }
         .solarium-checkbox {
-            width: 44px;
-            height: 44px;
+            width: 36px;
+            height: 36px;
             border: 2px solid var(--glass-border);
-            border-radius: 12px;
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             transition: 0.3s;
             background: var(--glass);
-            font-size: 20px;
+            font-size: 18px;
         }
         .solarium-checkbox.checked {
             background: linear-gradient(135deg, var(--success), #16a34a);
             border-color: var(--success);
             box-shadow: 0 0 15px var(--success-glow);
         }
-        .solarium-checkbox-label {
-            font-size: 9px;
-            color: var(--text-dim);
-            text-transform: uppercase;
-            text-align: center;
-        }
 
         .solarium-completed-section {
             margin-top: 20px;
-            display: none;
-        }
-        .solarium-completed-section.visible {
-            display: block;
         }
         .solarium-completed-header {
             font-size: 13px;
@@ -420,30 +441,8 @@
             padding-left: 5px;
         }
         
-        .solarium-stats {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-        .solarium-stat-box {
-            background: var(--glass);
-            padding: 12px;
-            border-radius: 12px;
-            text-align: center;
-            border: 1px solid var(--glass-border);
-        }
-        .solarium-stat-value {
-            font-size: 22px;
-            font-weight: 800;
-            color: var(--solarium);
-            display: block;
-        }
-        .solarium-stat-label {
-            font-size: 10px;
-            color: var(--text-dim);
-            text-transform: uppercase;
-            margin-top: 4px;
+        .solarium-completed-section.hidden {
+            display: none;
         }
 
         #reset-modal { 
@@ -541,10 +540,6 @@
         
         <div class="solarium-stats">
             <div class="solarium-stat-box">
-                <span class="solarium-stat-value" id="sol-total">0</span>
-                <div class="solarium-stat-label">Всего сеансов</div>
-            </div>
-            <div class="solarium-stat-box">
                 <span class="solarium-stat-value" id="sol-completed">0</span>
                 <div class="solarium-stat-label">Выполнено</div>
             </div>
@@ -554,19 +549,18 @@
             </div>
         </div>
 
-        <div id="solarium-active-sessions"></div>
-        
-        <div class="solarium-toggle" onclick="toggleCompletedSessions()">
-            <span class="solarium-toggle-label">📋 Завершенные сеансы</span>
-            <span class="solarium-toggle-count" id="completed-count">0</span>
-        </div>
-        
-        <div class="solarium-completed-section" id="completed-sessions-container">
-            <div class="solarium-completed-header">История посещений</div>
+        <div id="solarium-completed-sessions-container" class="solarium-completed-section">
+            <div class="solarium-completed-header">✅ Завершенные сеансы</div>
             <div id="solarium-completed-sessions"></div>
         </div>
 
-        <button class="btn-main" onclick="resetSolariumPlan()" style="background: linear-gradient(135deg, var(--solarium), #ea580c); margin-top: 15px;">🔄 Сбросить план</button>
+        <div class="solarium-toggle" onclick="toggleActiveSessions()">
+            <span class="solarium-toggle-label">📅 Активные сеансы</span>
+            <span class="solarium-toggle-count" id="active-count">0</span>
+        </div>
+        
+        <div id="solarium-active-sessions"></div>
+
     </div>
 
     <div id="tab-metrics" class="card">
@@ -685,7 +679,6 @@
         document.getElementById('workout-date').valueAsDate = new Date();
         document.getElementById('metrics-date').valueAsDate = new Date();
         
-        // Initialize solarium plan if not exists
         if (!localStorage.getItem('solariumPlan')) {
             localStorage.setItem('solariumPlan', JSON.stringify(DEFAULT_SOLARIUM_PLAN));
         }
@@ -1009,7 +1002,7 @@
         
         let activeHtml = '';
         let completedHtml = '';
-        let completedCount = 0;
+        let activeCount = 0;
         
         plan.forEach((duration, index) => {
             const sessionNum = index + 1;
@@ -1036,32 +1029,40 @@
                             onchange="updateSolariumDate(${sessionNum}, this.value)">
                     </div>
                     <div class="solarium-checkbox-wrapper">
+                        <span class="solarium-checkbox-label">Отметить выполнение</span>
                         <div class="solarium-checkbox ${isCompleted ? 'checked' : ''}" 
                             onclick="toggleSolariumSession(${sessionNum})">
                             ${isCompleted ? '✓' : ''}
                         </div>
-                        <span class="solarium-checkbox-label">Готово</span>
                     </div>
                 </div>
             </div>`;
             
             if (isCompleted) {
                 completedHtml += sessionHtml;
-                completedCount++;
             } else {
                 activeHtml += sessionHtml;
+                activeCount++;
             }
         });
         
         activeContainer.innerHTML = activeHtml || '<div style="text-align: center; color: var(--success); padding: 20px;">🎉 Все сеансы выполнены!</div>';
         completedContainer.innerHTML = completedHtml || '<div style="text-align: center; color: var(--text-dim); padding: 20px;">Пока нет завершенных сеансов</div>';
         
-        document.getElementById('completed-count').textContent = completedCount;
+        document.getElementById('active-count').textContent = activeCount;
+        
+        // Show/hide completed section
+        const completedSection = document.getElementById('solarium-completed-sessions-container');
+        if (completedHtml) {
+            completedSection.classList.remove('hidden');
+        } else {
+            completedSection.classList.add('hidden');
+        }
     }
 
-    function toggleCompletedSessions() {
-        const section = document.getElementById('completed-sessions-container');
-        section.classList.toggle('visible');
+    function toggleActiveSessions() {
+        const section = document.getElementById('solarium-active-sessions');
+        section.style.display = section.style.display === 'none' ? 'block' : 'none';
     }
 
     function updateSolariumDate(sessionNum, date) {
@@ -1114,16 +1115,8 @@
                 return sum + duration;
             }, 0);
         
-        document.getElementById('sol-total').textContent = plan.length;
         document.getElementById('sol-completed').textContent = completed;
         document.getElementById('sol-minutes').textContent = totalMinutes;
-    }
-
-    function resetSolariumPlan() {
-        if (!confirm('Сбросить все отметки о посещениях солярия?')) return;
-        localStorage.setItem('solariumHistory', JSON.stringify([]));
-        renderSolariumSessions();
-        updateSolariumStats();
     }
 
     function updateSolariumPlan() {
@@ -1136,8 +1129,6 @@
         }
         
         localStorage.setItem('solariumPlan', JSON.stringify(plan));
-        
-        // Clear history when plan changes
         localStorage.setItem('solariumHistory', JSON.stringify([]));
         
         alert('План солярия обновлен! История посещений сброшена.');
