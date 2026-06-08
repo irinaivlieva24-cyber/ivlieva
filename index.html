@@ -157,10 +157,6 @@
             cursor: pointer; font-weight: 700; margin-top: 20px; transition: 0.3s; 
             text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 8px 15px var(--accent-glow);
         }
-        .btn-main.finish-btn {
-            background: linear-gradient(to right, #fff, var(--accent));
-            box-shadow: 0 8px 15px var(--accent-glow);
-        }
         .btn-main.danger-btn {
             background: rgba(239, 68, 68, 0.15);
             color: var(--danger) !important;
@@ -169,6 +165,32 @@
         }
         .btn-main.danger-btn:hover {
             background: rgba(239, 68, 68, 0.25);
+        }
+        
+        .delete-btn-small {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: var(--danger);
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 18px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            transition: 0.2s;
+            padding: 0;
+        }
+        .delete-btn-small:hover {
+            background: rgba(239, 68, 68, 0.25);
+            transform: scale(1.05);
+        }
+        .delete-btn-small.visible {
+            display: flex;
         }
 
         .metrics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
@@ -265,7 +287,9 @@
 <div class="app-container">
     <h1 style="margin-top: 0;">F I T N E S S &nbsp; O S</h1>
     
-    <div id="tab-add" class="card active">
+    <div id="tab-add" class="card active" style="position: relative;">
+        <button class="delete-btn-small" id="delete-workout-btn" onclick="deleteCurrentWorkout()" title="Удалить тренировку">🗑️</button>
+        
         <h2 style="color: #fff;">⚡️ ТРЕНИРОВКА</h2>
         <div class="form-group">
             <label>Дата</label>
@@ -299,10 +323,7 @@
         
         <div id="exercise-list-container"></div>
         
-        <div style="display: flex; gap: 10px; margin-top: 20px;">
-            <button class="btn-main finish-btn" id="finish-btn" onclick="finishWorkout()" style="flex: 2;">Завершить тренировку</button>
-            <button class="btn-main danger-btn" id="delete-workout-btn" onclick="deleteCurrentWorkout()" style="flex: 1; display: none;">🗑️ Удалить</button>
-        </div>
+        <button class="btn-main" onclick="finishWorkout()">Завершить тренировку</button>
     </div>
 
     <div id="tab-stats" class="card">
@@ -439,18 +460,15 @@
     }
 
     function showTab(tabName) {
-        // Скрываем все карточки
         document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
         document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
         
-        // Показываем нужную
         const activeTab = document.getElementById('tab-' + tabName);
         const activeNav = document.getElementById('nav-' + tabName);
         
         if (activeTab) activeTab.classList.add('active');
         if (activeNav) activeNav.classList.add('active');
         
-        // Обновляем данные для вкладок
         if(tabName === 'stats') { 
             updateSummary(); 
             updateGroupChart(); 
@@ -569,7 +587,7 @@
         if (!type || !date) { 
             container.innerHTML = ''; 
             statusContainer.innerHTML = '';
-            deleteBtn.style.display = 'none';
+            deleteBtn.classList.remove('visible');
             updateProgressIndicator(); 
             return; 
         }
@@ -584,13 +602,13 @@
 
         if (isFinished) {
             statusContainer.innerHTML = `<div class="status-badge finished">✅ Тренировка завершена. Вы можете отредактировать или удалить её.</div>`;
-            deleteBtn.style.display = 'block';
+            deleteBtn.classList.add('visible');
         } else if (drafts[draftKey]) {
             statusContainer.innerHTML = `<div class="status-badge draft">📝 Черновик (автосохранение включено)</div>`;
-            deleteBtn.style.display = 'none';
+            deleteBtn.classList.remove('visible');
         } else {
             statusContainer.innerHTML = `<div class="status-badge draft">🆕 Новая тренировка</div>`;
-            deleteBtn.style.display = 'none';
+            deleteBtn.classList.remove('visible');
         }
         
         let html = '';
@@ -1033,7 +1051,6 @@
         location.reload();
     }
 
-    // Инициализация при загрузке
     window.addEventListener('DOMContentLoaded', function() {
         initApp();
     });
